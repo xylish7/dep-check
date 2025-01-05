@@ -9,8 +9,8 @@ CREATE TABLE public.github_tokens (
 
 
     access_token    TEXT NOT NULL,
-    access_token_expires_at INT NOT NULL,
+    access_token_expires_in INT NOT NULL,
     refresh_token   TEXT NOT NULL,
-    refresh_token_expires_at INT NOT NULL
+    refresh_token_expires_in INT NOT NULL
 );
 

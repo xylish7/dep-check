@@ -14,6 +14,8 @@ export const posthogHost = process.env.NEXT_PUBLIC_POSTHOG_HOST ?? "";
 
 export const sentryDsn = process.env.NEXT_PUBLIC_SENTRY_DSN ?? "";
 
+export const githubAppClientId = process.env.NEXT_GITHUB_APP_CLIENT_ID;
+
 // Server-side only
 export const supabaseAdminKey = process.env.SUPABASE_ADMIN_KEY ?? "";
 
@@ -26,7 +28,6 @@ export const discordPaymentWebhookId = process.env.DISCORD_PAYMENT_WEBHOOK_ID;
 export const discordPaymentWebhookToken =
   process.env.DISCORD_PAYMENT_WEBHOOK_TOKEN;
 
-export const githubAppClientId = process.env.GITHUB_APP_CLIENT_ID;
 export const githubAppClientSecret = process.env.GITHUB_APP_CLIENT_SECRET;
 export const githubAppPrivateKey = process.env.GITHUB_APP_PRIVATE_KEY;
 export const githubAppId = process.env.GITHUB_APP_ID;

@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { supabaseApi } from "@/supabase/api";
+import { supabaseApi } from "@/apis/supabase";
 import { serverClient } from "@/supabase/clients/server";
 
 import LoginCard from "./_components/login-card";

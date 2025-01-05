@@ -1,10 +1,9 @@
-import { githubAppClientId, githubAppClientSecret } from "@/config/env";
-import { Octokit } from "@octokit/rest";
 import { NextResponse } from "next/server";
 
 import { adminClient } from "@/supabase/clients/admin";
 import { serverClient } from "@/supabase/clients/server";
-import { supabaseApi } from "@/supabase/api";
+import { supabaseApi } from "@/apis/supabase";
+import { resourcesApi } from "@/apis/resources";
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
@@ -23,48 +22,22 @@ export async function GET(request: Request) {
   }
 
   try {
-    const response = await fetch(
-      "https://github.com/login/oauth/access_token",
-      {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          client_id: githubAppClientId,
-          client_secret: githubAppClientSecret,
-          code,
-        }),
-      }
-    );
+    const tokensData = await resourcesApi.github.getAccessToken(code);
 
-    const data = (await response.json()) as {
-      access_token: string;
-      expires_in: number;
-      refresh_token: string;
-      refresh_token_expires_in: number;
-      token_type: string;
-      scope: string;
-    };
-
-    const { error } = await supabaseApi.github.updateGithubTokens(
+    const { error } = await supabaseApi.github.updateTokens(
       supabaseAdminClient,
-      user.id,
-
       {
-        access_token: data.access_token,
-        access_token_expires_at: data.expires_in,
-        refresh_token: data.refresh_token,
-        refresh_token_expires_in: data.refresh_token_expires_in,
-        token_type: data.token_type,
-        scope: data.scope,
+        id: user.id,
+        access_token: tokensData.access_token,
+        access_token_expires_in: tokensData.expires_in,
+        refresh_token: tokensData.refresh_token,
+        refresh_token_expires_in: tokensData.refresh_token_expires_in,
       }
     );
 
-    // const octokit = new Octokit({
-    //   auth: data.access_token,
-    // });
+    if (error) {
+      return NextResponse.redirect(`${origin}/server-error`);
+    }
 
     return NextResponse.redirect(`${origin}/account`);
   } catch (error) {

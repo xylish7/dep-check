@@ -1,15 +1,16 @@
 import { SupabaseClient } from "@supabase/supabase-js";
-import { Database } from "../types";
+import { Database } from "../../supabase/types";
 import { getSession, getUser, signInWithGoogle, signOut } from "./auth";
 import { getProfile } from "./profiles";
-import { updateGithubTokens } from "./github";
+import { getGithubTokens, updateGithubTokens } from "./github";
 
 export type Client = SupabaseClient<Database>;
 
 export const supabaseApi = {
   auth: { getUser, getSession, signInWithGoogle, signOut },
   github: {
-    updateGithubTokens,
+    getTokens: getGithubTokens,
+    updateTokens: updateGithubTokens,
   },
   profiles: {
     getByUuid: getProfile,

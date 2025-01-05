@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 
-import { supabaseApi } from "@/supabase/api";
+import { supabaseApi } from "@/apis/supabase";
 import { serverClient } from "@/supabase/clients/server";
 
 export async function signIn(redirectTo?: string) {
