@@ -1,27 +1,4 @@
-import { CartProduct } from "@/providers/cart";
 import { isClient } from "./is-client";
-
-const CART_PRODUCTS = "cart-products";
-
-function getCartProducts(): CartProduct[] {
-  if (!isClient()) {
-    return [];
-  }
-
-  const products = localStorage.getItem(CART_PRODUCTS);
-  if (products) {
-    return JSON.parse(products) as CartProduct[];
-  }
-
-  return [];
-}
-
-function setCartProducts(products: CartProduct[]) {
-  if (!isClient()) {
-    return;
-  }
-  localStorage.setItem(CART_PRODUCTS, JSON.stringify(products));
-}
 
 function getSignUpTermsAccepted() {
   if (!isClient()) {
@@ -60,8 +37,6 @@ function setCookiesConsent(consent: "yes" | "no") {
 }
 
 export const storage = {
-  getCartProducts,
-  setCartProducts,
   getSignUpTermsAccepted,
   setSignUpTermsAccepted,
   getCookiesConsent,

@@ -3,6 +3,44 @@ export type Json = any;
 export type Database = {
   public: {
     Tables: {
+      github_repos: {
+        Row: {
+          created_at: string;
+          id: number;
+          name: string;
+          package_json: string;
+          updated_at: string;
+          updates: Json | null;
+          uuid: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: number;
+          name: string;
+          package_json: string;
+          updated_at?: string;
+          updates?: Json | null;
+          uuid: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: number;
+          name?: string;
+          package_json?: string;
+          updated_at?: string;
+          updates?: Json | null;
+          uuid?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "github_repos_uuid_fkey";
+            columns: ["uuid"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
       github_tokens: {
         Row: {
           access_token: string;

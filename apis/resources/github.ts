@@ -1,8 +1,21 @@
-"use-server";
+"use server";
 
 import { githubAppClientId, githubAppClientSecret } from "@/config/env";
 
-export async function getGithubAccessToken(code: string) {
+export type OAuthAccessTokenRes =
+  | {
+      access_token: string;
+      expires_in: number;
+      refresh_token: string;
+      refresh_token_expires_in: number;
+      token_type: string;
+      scope: string;
+    }
+  | { error: string };
+
+export async function getGithubAccessToken(
+  code: string
+): Promise<OAuthAccessTokenRes> {
   const response = await fetch("https://github.com/login/oauth/access_token", {
     method: "POST",
     headers: {
@@ -16,17 +29,12 @@ export async function getGithubAccessToken(code: string) {
     }),
   });
 
-  return (await response.json()) as {
-    access_token: string;
-    expires_in: number;
-    refresh_token: string;
-    refresh_token_expires_in: number;
-    token_type: string;
-    scope: string;
-  };
+  return (await response.json()) as OAuthAccessTokenRes;
 }
 
-export async function refreshGithubAccessToken(refreshToken: string) {
+export async function refreshGithubAccessToken(
+  refreshToken: string
+): Promise<OAuthAccessTokenRes> {
   const response = await fetch("https://github.com/login/oauth/access_token", {
     method: "POST",
     headers: {
@@ -41,12 +49,5 @@ export async function refreshGithubAccessToken(refreshToken: string) {
     }),
   });
 
-  return (await response.json()) as {
-    access_token: string;
-    expires_in: number;
-    refresh_token: string;
-    refresh_token_expires_in: number;
-    token_type: string;
-    scope: string;
-  };
+  return (await response.json()) as OAuthAccessTokenRes;
 }

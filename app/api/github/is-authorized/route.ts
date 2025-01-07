@@ -12,12 +12,12 @@ export async function GET() {
   }
 
   const supabaseAdminClient = adminClient();
-  const { data: tokensData, error } = await supabaseApi.github.getTokens(
+  const { data: tokensData, error } = await supabaseApi.github.tokens.get(
     supabaseAdminClient,
     user.id
   );
 
-  if (error || !tokensData) {
+  if (error) {
     return NextResponse.json(
       { error: "Unable to fetch tokens" },
       { status: 500 }
@@ -25,8 +25,8 @@ export async function GET() {
   }
 
   if (tokensData) {
-    return NextResponse.json({ authorized: true }, { status: 200 });
+    return NextResponse.json({ authorized: true });
   }
 
-  return NextResponse.json({ authorized: false }, { status: 404 });
+  return NextResponse.json({ authorized: false });
 }

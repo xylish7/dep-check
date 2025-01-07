@@ -1,5 +1,5 @@
 import { PostgrestError } from "@supabase/supabase-js";
-import { Client, GithubTokensInsert } from ".";
+import { Client, GithubTokensInsert, GithubTokensRow } from ".";
 
 export async function updateGithubTokens(
   supabase: Client,
@@ -19,14 +19,13 @@ export async function getGithubTokens(
   supabase: Client,
   id: string
 ): Promise<{
-  data: GithubTokensInsert | null;
+  data: GithubTokensRow | null;
   error: PostgrestError | null;
 }> {
   const { data, error } = await supabase
     .from("github_tokens")
     .select("*")
-    .eq("id", id)
-    .single();
+    .eq("id", id);
 
-  return { data, error };
+  return { data: data ? data[0] : null, error };
 }

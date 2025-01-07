@@ -1,10 +1,9 @@
-import { Octokit } from "@octokit/rest";
+// import { Octokit } from "@octokit/rest";
 import { NextRequest, NextResponse } from "next/server";
 
-import { adminClient } from "@/supabase/clients/admin";
 import { supabaseApi } from "@/apis/supabase";
 import { serverClient } from "@/supabase/clients/server";
-import { resourcesApi } from "@/apis/resources";
+import { getGithubTokensUtility } from "@/utils/get-github-tokens";
 
 export async function POST(req: NextRequest) {
   const payload = (await req.json()) as { repo: string; owner: string };
@@ -19,17 +18,13 @@ export async function POST(req: NextRequest) {
 
   try {
     const supabaseClient = await serverClient();
-    const supabaseAdminClient = adminClient();
 
     const { user } = await supabaseApi.auth.getUser(supabaseClient);
     if (!user) {
       return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
 
-    const { data: tokensData, error } = await supabaseApi.github.getTokens(
-      supabaseAdminClient,
-      user.id
-    );
+    const { data: tokensData, error } = await getGithubTokensUtility(user.id);
 
     if (error || !tokensData) {
       return NextResponse.json(
@@ -38,47 +33,20 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const accessTokenExpired =
-      new Date(tokensData.access_token_expires_in) < new Date();
+    // const octokit = new Octokit({
+    //   auth: tokensData.access_token,
+    // });
 
-    if (accessTokenExpired) {
-      const newTokensData = await resourcesApi.github.refreshAccessToken(
-        tokensData.refresh_token
-      );
+    // const { data } = await octokit.repos.getContent({
+    //   owner: owner as string,
+    //   repo: repo as string,
+    //   path: "package.json",
+    // });
 
-      const { error } = await supabaseApi.github.updateTokens(
-        supabaseAdminClient,
-        {
-          id: user.id,
-          access_token: newTokensData.access_token,
-          access_token_expires_in: newTokensData.expires_in,
-          refresh_token: newTokensData.refresh_token,
-          refresh_token_expires_in: newTokensData.refresh_token_expires_in,
-        }
-      );
+    // const content = Buffer.from(data.content, "base64").toString("utf-8");
+    // const packageData = JSON.parse(content);
 
-      if (error) {
-        return NextResponse.json(
-          { error: "Unable to update tokens" },
-          { status: 500 }
-        );
-      }
-    }
-
-    const octokit = new Octokit({
-      auth: tokensData.access_token,
-    });
-
-    const { data } = await octokit.repos.getContent({
-      owner: owner as string,
-      repo: repo as string,
-      path: "package.json",
-    });
-
-    const content = Buffer.from(data.content, "base64").toString("utf-8");
-    const packageJson = JSON.parse(content);
-
-    return NextResponse.json(packageJson);
+    return NextResponse.json({ data: "packageData" });
   } catch (error) {
     console.error(error);
     return NextResponse.json(

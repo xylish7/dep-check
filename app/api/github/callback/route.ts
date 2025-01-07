@@ -24,7 +24,11 @@ export async function GET(request: Request) {
   try {
     const tokensData = await resourcesApi.github.getAccessToken(code);
 
-    const { error } = await supabaseApi.github.updateTokens(
+    if ("error" in tokensData) {
+      return NextResponse.redirect(`${origin}/server-error`);
+    }
+
+    const { error } = await supabaseApi.github.tokens.update(
       supabaseAdminClient,
       {
         id: user.id,
