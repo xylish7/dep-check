@@ -9,8 +9,8 @@ export type Database = {
           id: number;
           name: string;
           package_json: string;
+          packages: Json | null;
           updated_at: string;
-          updates: Json | null;
           uuid: string;
         };
         Insert: {
@@ -18,8 +18,8 @@ export type Database = {
           id?: number;
           name: string;
           package_json: string;
+          packages?: Json | null;
           updated_at?: string;
-          updates?: Json | null;
           uuid: string;
         };
         Update: {
@@ -27,8 +27,8 @@ export type Database = {
           id?: number;
           name?: string;
           package_json?: string;
+          packages?: Json | null;
           updated_at?: string;
-          updates?: Json | null;
           uuid?: string;
         };
         Relationships: [

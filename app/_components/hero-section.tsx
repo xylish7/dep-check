@@ -51,7 +51,7 @@ export const HeroSection = () => {
 
           <div className="flex flex-row items-center justify-center mt-10 gap-8">
             <Link
-              href="/account"
+              href="/account/dashboard"
               className={buttonStyles({
                 className: "min-w-fit",
                 color: "primary",

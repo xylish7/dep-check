@@ -11,5 +11,5 @@ CREATE TABLE public.github_repos (
 
     name            TEXT NOT NULL UNIQUE,
     package_json    TEXT NOT NULL,
-    updates         JSON 
+    packages        JSON 
 );

@@ -6,12 +6,12 @@ export async function middleware(req: NextRequest) {
   const referer = req.headers.get("referer");
 
   if (user && req.nextUrl.pathname === "/" && !referer) {
-    return Response.redirect(new URL("/account", req.url));
+    return Response.redirect(new URL("/account/dashboard", req.url));
   }
 
   if (
     !user &&
-    req.nextUrl.pathname.startsWith("/account") &&
+    req.nextUrl.pathname.startsWith("/account/dashboard") &&
     req.nextUrl.pathname !== "/contact"
   ) {
     return Response.redirect(new URL("/sign-in", req.url));

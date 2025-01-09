@@ -9,10 +9,9 @@ import { Navbar as MainNavbar } from "@/components/navbar";
 import { LoggedInNavbar } from "@/components/logged-in-navbar";
 
 const mainRoutes = [
-  ...siteConfig.routes.filter((route) => route.href !== "/account"),
+  ...siteConfig.routes.filter((route) => route.href !== "/account/dashboard"),
   ...siteConfig.legalRoutes,
 ].map((route) => route.href);
-mainRoutes.push("/autentificare", "/checkout");
 
 export default function RootLayoutContent({
   children,

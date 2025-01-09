@@ -43,7 +43,7 @@ export async function GET(request: Request) {
       return NextResponse.redirect(`${origin}/server-error`);
     }
 
-    return NextResponse.redirect(`${origin}/account`);
+    return NextResponse.redirect(`${origin}/account/dashboard`);
   } catch (error) {
     console.error("GitHub OAuth error:", error);
     return NextResponse.redirect(`${origin}/server-error`);

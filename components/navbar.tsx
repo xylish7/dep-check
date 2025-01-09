@@ -184,8 +184,8 @@ function AccountButton() {
           size: "sm",
           variant: "flat",
         })}
-        href="/account"
-        aria-label="Contul meu"
+        href="/account/dashboard"
+        aria-label="My account"
       >
         <UserCircle size={18} />
       </Link>
@@ -196,7 +196,7 @@ function AccountButton() {
           size: "sm",
           variant: "flat",
         })}
-        href="/account"
+        href="/account/dashboard"
       >
         <UserCircle size={18} />
         My account

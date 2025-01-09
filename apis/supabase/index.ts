@@ -5,6 +5,7 @@ import { getProfile } from "./profiles";
 import { getGithubTokens, updateGithubTokens } from "./github-tokens";
 import {
   addGithubRepos,
+  deleteGithubRepo,
   getAllGithubRepos,
   getGithubRepo,
   updateGithubRepo,
@@ -17,6 +18,7 @@ export const supabaseApi = {
   github: {
     repos: {
       add: addGithubRepos,
+      delete: deleteGithubRepo,
       get: getGithubRepo,
       getAll: getAllGithubRepos,
       update: updateGithubRepo,
@@ -41,30 +43,26 @@ export type GithubTokensRow = DbGithubTokens["Row"];
 export type GithubTokensInsert = DbGithubTokens["Insert"];
 export type GithubTokensUpdate = DbGithubTokens["Update"];
 
-export type DependencyType = "major" | "minor" | "patch" | "major-zero";
+export type Version = "major" | "minor" | "patch";
+export type Dependency = "dep" | "devDep";
 
-export type Dependency = {
+export type Package = {
   current: string;
+  depType: Dependency;
   last: string;
-  type?: DependencyType;
-};
-
-export type Dependencies = Record<string, Dependency>;
-
-export type Updates = {
-  dependencies: Dependencies;
-  devDependencies: Dependencies;
+  name: string;
+  version?: Version;
 };
 
 type DbGithubRepos = Database["public"]["Tables"]["github_repos"];
-export interface GithubReposRow extends Omit<DbGithubRepos["Row"], "updates"> {
-  updates: Updates | null;
+export interface GithubReposRow extends Omit<DbGithubRepos["Row"], "packages"> {
+  packages: Package[] | null;
 }
 export interface GithubReposInsert
-  extends Omit<DbGithubRepos["Insert"], "updates"> {
-  updates?: Updates;
+  extends Omit<DbGithubRepos["Insert"], "packages"> {
+  packages?: Package[];
 }
 export interface GithubReposUpdate
-  extends Omit<DbGithubRepos["Update"], "updates"> {
-  updates?: Updates;
+  extends Omit<DbGithubRepos["Update"], "packages"> {
+  packages?: Package[];
 }

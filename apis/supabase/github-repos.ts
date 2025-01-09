@@ -65,3 +65,20 @@ export async function updateGithubRepo(
 
   return { data, error };
 }
+
+export async function deleteGithubRepo(
+  supabase: Client,
+  id: number
+): Promise<{
+  data: GithubReposRow | null;
+  error: PostgrestError | null;
+}> {
+  const { error, data } = await supabase
+    .from("github_repos")
+    .delete()
+    .eq("id", id)
+    .select()
+    .single();
+
+  return { data, error };
+}

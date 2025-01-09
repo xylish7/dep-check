@@ -62,7 +62,7 @@ export default function LoginCard({ user }: LoginCardProps) {
       return;
     }
 
-    router.replace("/account");
+    router.replace("/account/dashboard");
   }, [route, user, router]);
 
   if (user) {

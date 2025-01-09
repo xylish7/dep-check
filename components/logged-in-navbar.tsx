@@ -51,7 +51,9 @@ export const LoggedInNavbar = ({ brandName }: NavbarProps) => {
         justify="start"
       >
         {navItems.map((item) => {
-          const isHome = item.href === "/account" && pathname === "/account";
+          const isHome =
+            item.href === "/account/dashboard" &&
+            pathname === "/account/dashboard";
 
           return (
             <NavbarItem
@@ -59,7 +61,8 @@ export const LoggedInNavbar = ({ brandName }: NavbarProps) => {
               isActive={
                 isHome
                   ? true
-                  : pathname.includes(item.href) && item.href !== "/account"
+                  : pathname.includes(item.href) &&
+                    item.href !== "/account/dashboard"
               }
               key={item.href}
             >
@@ -127,8 +130,8 @@ function ContactButton() {
 
 export const navItems = [
   {
-    label: "Account",
-    href: "/account",
+    label: "Dashboard",
+    href: "/account/dashboard",
     icon: <Books size={22} />,
   },
 ];
