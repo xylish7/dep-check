@@ -10,24 +10,23 @@ import { Button } from "@nextui-org/button";
 import { PackageJsonDropzone } from "@/components/package-json-dropzone";
 import { useNotification } from "@/providers/notification";
 
-interface AddReposModalProps {
+interface UploadPackageJsonModal {
   isOpen: boolean;
-  onAdd: (file: File) => void;
+  onUpload: (file: File) => Promise<void>;
   onOpenChange: (isOpen: boolean) => void;
 }
 
-export function AddReposModal({
+export function UploadPackageJsonModal({
   isOpen,
-  onAdd,
+  onUpload,
   onOpenChange,
-}: AddReposModalProps) {
+}: UploadPackageJsonModal) {
   const [file, setFile] = useState<File | null>(null);
-  // const [repos, setRepos] = useState<GetGithubReposResponse["data"]>(null);
-  // const [isLoading, setIsLoading] = useState(true);
+  const [isAdding, setIsAdding] = useState(false);
   const { showNotification } = useNotification();
 
   // Handle adding a repo
-  function handleAdd(onClose: () => void) {
+  async function handleUpload(onClose: () => void) {
     if (!file) {
       showNotification({
         message: "Please select a package.json file",
@@ -36,32 +35,11 @@ export function AddReposModal({
       return;
     }
 
-    onAdd(file);
+    setIsAdding(true);
+    await onUpload(file);
+    setIsAdding(false);
     onClose();
   }
-
-  // useEffect(() => {
-  //   if (!isOpen) return;
-  //   (async () => {
-  //     setIsLoading(true);
-
-  //     const { data: reposData, error: reposError } =
-  //       await serverApi.github.repos.get();
-
-  //     if (reposError) {
-  //       showNotification({
-  //         message: "Unable to fetch repos",
-  //         color: "danger",
-  //       });
-  //       setIsLoading(false);
-  //       return;
-  //     }
-
-  //     setRepos(reposData);
-
-  //     setIsLoading(false);
-  //   })();
-  // }, [isOpen]);
 
   return (
     <Modal
@@ -79,28 +57,17 @@ export function AddReposModal({
             </ModalHeader>
             <ModalBody>
               <PackageJsonDropzone onFile={setFile} />
-              {/* <Autocomplete
-                isLoading={isLoading}
-                label="Repositories"
-                onSelectionChange={(e) => console.log(e)}
-              >
-                {(repos ?? []).map((repo) => (
-                  <AutocompleteItem key={repo.name}>
-                    {repo.name}
-                  </AutocompleteItem>
-                ))}
-              </Autocomplete> */}
             </ModalBody>
             <ModalFooter>
-              <Button variant="flat" size="sm" onPress={onClose}>
+              <Button variant="flat" onPress={onClose}>
                 Close
               </Button>
               <Button
                 color="primary"
-                size="sm"
-                onPress={() => handleAdd(onClose)}
+                isLoading={isAdding}
+                onPress={() => handleUpload(onClose)}
               >
-                Add
+                Upload
               </Button>
             </ModalFooter>
           </>

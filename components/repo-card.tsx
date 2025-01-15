@@ -8,13 +8,16 @@ import { GithubReposRow, Package } from "@/apis/supabase";
 import { serverApi } from "@/apis/server";
 import { useNotification } from "@/providers/notification";
 import { Link } from "@nextui-org/link";
+import { timeAgo } from "@/utils/time-ago";
 
 interface RepoCardProps {
   repo: GithubReposRow;
 }
 
 export function RepoCard({ repo }: RepoCardProps) {
+  console.log("🚀 ~ RepoCard ~ repo:", repo);
   const [packages, setPackages] = useState<Package[] | null>(repo.packages);
+  const [lastCheck, setLastCheck] = useState(repo.last_check);
   const { showNotification } = useNotification();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -27,7 +30,7 @@ export function RepoCard({ repo }: RepoCardProps) {
     setIsLoading(true);
     const { data, error } = await serverApi.dependencies.get(repo.id);
 
-    if (error) {
+    if (error || !data) {
       showNotification({
         message: "Failed to check dependencies",
         color: "danger",
@@ -37,12 +40,19 @@ export function RepoCard({ repo }: RepoCardProps) {
     }
 
     setIsLoading(false);
-    setPackages(data);
+    setPackages(data.packages);
+    setLastCheck(data.lastCheck);
   }
 
   return (
     <Card className="p-2">
-      <CardHeader className="text-lg font-semibold">{repo.name}</CardHeader>
+      <CardHeader className="flex justify-between items-start">
+        <span className="text-lg font-semibold">{repo.name}</span>
+        <div className="flex flex-col text-xs text-default-500 mt-1">
+          <span>Last checked</span>
+          <span>{lastCheck ? timeAgo(lastCheck) : "Never"}</span>
+        </div>
+      </CardHeader>
       <CardBody>
         {packages ? (
           <div className="flex flex-col gap-4">

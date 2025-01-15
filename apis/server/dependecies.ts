@@ -1,7 +1,7 @@
-import { Updates } from "../supabase";
+import { Package } from "../supabase";
 
 export async function getUpdates(repoId: number): Promise<{
-  data: Updates | null;
+  data: { packages: Package[]; lastCheck: string } | null;
   error: unknown | null;
 }> {
   try {

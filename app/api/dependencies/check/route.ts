@@ -53,11 +53,13 @@ export async function POST(req: NextRequest) {
       ),
     ];
 
+    const lastCheck = new Date().toISOString();
     supabaseApi.github.repos.update(supabaseClient, repoId, {
       packages,
+      last_check: lastCheck,
     });
 
-    return NextResponse.json({ data: packages });
+    return NextResponse.json({ data: { packages, lastCheck } });
   } catch (error) {
     console.error(error);
     return NextResponse.json(

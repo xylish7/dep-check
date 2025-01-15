@@ -9,7 +9,8 @@ CREATE TABLE public.github_repos (
     updated_at      TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::TEXT, NOW()) NOT NULL,
 
 
-    name            TEXT NOT NULL UNIQUE,
+    name            TEXT NOT NULL,
+    last_check      TIMESTAMP WITH TIME ZONE,
     package_json    TEXT NOT NULL,
     packages        JSON 
 );

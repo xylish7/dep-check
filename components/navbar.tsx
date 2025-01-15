@@ -55,7 +55,7 @@ export const Navbar = ({
           href="/"
         >
           <Image alt="Logo" height={30} width={30} src="/images/logo.png" />
-          <span className="font-bold ml-1 mt-1 text-lg">{brandName}</span>
+          <span className="font-bold text-lg">{brandName}</span>
         </Link>
       </NavbarBrand>
       <NavbarContent

@@ -3,20 +3,13 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@nextui-org/button";
-import {
-  getKeyValue,
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-} from "@nextui-org/table";
 import { Card, CardBody } from "@nextui-org/card";
+import { useDisclosure } from "@nextui-org/modal";
 import {
   ArrowLeft,
   ArrowsClockwise,
   Trash,
+  Upload,
 } from "@phosphor-icons/react/dist/ssr";
 
 import { browserClient } from "@/supabase/clients/browser";
@@ -25,6 +18,9 @@ import { useNotification } from "@/providers/notification";
 import { PageLoader } from "@/components/page-loader";
 import { DependencyInfo, getCountPerVersion } from "@/components/repo-card";
 import { serverApi } from "@/apis/server";
+import { UploadPackageJsonModal } from "../_components/upload-package-json-modal";
+import { PackagesTable } from "./_components/packages-table";
+import { timeAgo } from "@/utils/time-ago";
 
 const supabaseClient = browserClient();
 
@@ -32,13 +28,16 @@ export default function RepositoryPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isChecking, setIsChecking] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [lastCheck, setLastCheck] = useState<string | null>(null);
   const [packages, setPackages] = useState<GithubReposRow["packages"] | null>(
     null
   );
+
   const { id } = useParams() as { id: string };
   const [repo, setRepo] = useState<GithubReposRow | null>(null);
   const { showNotification } = useNotification();
   const router = useRouter();
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   async function handleCheck() {
     if (!repo) {
@@ -48,7 +47,7 @@ export default function RepositoryPage() {
     setIsChecking(true);
     const { data, error } = await serverApi.dependencies.get(repo.id);
 
-    if (error) {
+    if (error || !data) {
       showNotification({
         message: "Failed to check dependencies",
         color: "danger",
@@ -58,7 +57,8 @@ export default function RepositoryPage() {
     }
 
     setIsChecking(false);
-    setPackages(data);
+    setPackages(data.packages);
+    setLastCheck(data.lastCheck);
   }
 
   async function handleDelete() {
@@ -97,7 +97,7 @@ export default function RepositoryPage() {
         Number(id)
       );
 
-      if (error) {
+      if (error || !data) {
         showNotification({
           message: "Failed to load repository",
           color: "danger",
@@ -106,7 +106,8 @@ export default function RepositoryPage() {
       }
 
       setRepo(data);
-      setPackages(data?.packages ?? []);
+      setPackages(data.packages);
+      setLastCheck(data.last_check);
       setIsLoading(false);
     })();
   }, [id]);
@@ -140,22 +141,20 @@ export default function RepositoryPage() {
         </div>
 
         <div className="flex gap-2">
-          <Button
-            isLoading={isChecking}
-            size="sm"
-            variant="flat"
-            onPress={handleCheck}
-          >
-            {isChecking ? null : <ArrowsClockwise size={18} />} Check Updates
+          <Button isLoading={isChecking} variant="flat" onPress={handleCheck}>
+            {isChecking ? null : <ArrowsClockwise size={20} />} Check Updates
+          </Button>
+          <Button variant="flat" onPress={onOpen}>
+            <Upload size={20} />
+            Upload package.json
           </Button>
           <Button
             color="danger"
             isLoading={isDeleting}
-            size="sm"
             variant="flat"
             onPress={handleDelete}
           >
-            {isDeleting ? null : <Trash size={18} />} Delete
+            {isDeleting ? null : <Trash size={20} />} Delete
           </Button>
         </div>
       </div>
@@ -163,6 +162,13 @@ export default function RepositoryPage() {
         <Card className="p-2 flex-shrink-0 h-min">
           <CardBody>
             <div className="flex flex-col gap-4">
+              <div className="flex flex-col text-sm">
+                <span className="text-default-500 font-semibold">
+                  Last checked
+                </span>
+
+                <span>{lastCheck ? timeAgo(lastCheck) : "Never"}</span>
+              </div>
               <div className="flex flex-col text-sm gap-1">
                 <span className="text-default-500 font-semibold">Packages</span>
                 <div className="flex gap-4 text-sm">
@@ -175,42 +181,15 @@ export default function RepositoryPage() {
             </div>
           </CardBody>
         </Card>
-        <Table aria-label="Example table with dynamic content">
-          <TableHeader columns={columns}>
-            {(column) => (
-              <TableColumn key={column.key}>{column.label}</TableColumn>
-            )}
-          </TableHeader>
-          <TableBody items={repo.packages ?? []}>
-            {(item) => (
-              <TableRow key={item.name}>
-                {(columnKey) => (
-                  <TableCell>{getKeyValue(item, columnKey)}</TableCell>
-                )}
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+        <div className="flex flex-col items-center w-full gap-2">
+          <PackagesTable packages={packages ?? []} />
+        </div>
       </div>
+      <UploadPackageJsonModal
+        isOpen={isOpen}
+        onUpload={() => {}}
+        onOpenChange={onOpenChange}
+      />
     </div>
   );
 }
-
-const columns = [
-  {
-    key: "name",
-    label: "NAME",
-  },
-  {
-    key: "current",
-    label: "CURRENT",
-  },
-  {
-    key: "last",
-    label: "LATEST",
-  },
-  {
-    key: "version",
-    label: "VERSION",
-  },
-];

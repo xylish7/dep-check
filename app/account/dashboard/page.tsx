@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Plus } from "@phosphor-icons/react/dist/ssr";
+import { Upload } from "@phosphor-icons/react/dist/ssr";
 import { Button } from "@nextui-org/button";
 
 import { useNotification } from "@/providers/notification";
@@ -9,22 +9,21 @@ import { PageLoader } from "@/components/page-loader";
 import { GithubReposRow, supabaseApi } from "@/apis/supabase";
 import { browserClient } from "@/supabase/clients/browser";
 import { useDisclosure } from "@nextui-org/modal";
-import { AddReposModal } from "./_components/add-repos-modal";
+import { UploadPackageJsonModal } from "./_components/upload-package-json-modal";
 import { RepoCard } from "@/components/repo-card";
+import { serverApi } from "@/apis/server";
 
 const supabaseClient = browserClient();
-// const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${githubAppClientId}&scope=repo,user`;
 
 export default function AccountPage() {
   const [repos, setRepos] = useState<GithubReposRow[]>([]);
-  // const [isAuthorized, setIsAuthorized] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const { showNotification } = useNotification();
   const isInitialized = useRef(false);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   // Handle adding a repo
-  async function handleAdd(file: File) {
+  async function handleUpload(file: File) {
     const { error: sessionError, session } = await supabaseApi.auth.getSession(
       supabaseClient
     );
@@ -37,36 +36,52 @@ export default function AccountPage() {
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = async (event: ProgressEvent<FileReader>) => {
-      const content = event.target?.result as string;
-      const parsedContent = JSON.parse(content);
+    const content = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (event: ProgressEvent<FileReader>) => {
+        resolve(event.target?.result as string);
+      };
+      reader.onerror = reject;
+      reader.readAsText(file);
+    });
 
-      const { data: addedRepo, error: addRepoError } =
-        await supabaseApi.github.repos.add(supabaseClient, {
-          uuid: session.user.id,
-          name: parsedContent.name,
-          package_json: content as string,
-        });
+    const parsedContent = JSON.parse(content);
 
-      if (addRepoError || !addedRepo) {
-        if (addRepoError?.code === "23505") {
-          showNotification({
-            message: "Repository already exists",
-            color: "warning",
-          });
-          return;
-        }
+    const { data: addedRepo, error: addRepoError } =
+      await supabaseApi.github.repos.add(supabaseClient, {
+        uuid: session.user.id,
+        name: parsedContent.name,
+        package_json: content as string,
+      });
+
+    if (addRepoError || !addedRepo) {
+      if (addRepoError?.code === "23505") {
         showNotification({
-          message: "Unable to add repository",
-          color: "danger",
+          message: "Repository already exists",
+          color: "warning",
         });
         return;
       }
+      showNotification({
+        message: "Unable to add repository",
+        color: "danger",
+      });
+      return;
+    }
 
-      setRepos((prevRepos) => [...prevRepos, addedRepo]);
-    };
-    reader.readAsText(file);
+    const { data: updates, error } = await serverApi.dependencies.get(
+      addedRepo.id
+    );
+
+    if (error || !updates) {
+      showNotification({
+        message: "Failed to check dependencies",
+        color: "danger",
+      });
+      return;
+    }
+
+    setRepos((prevRepos) => [...prevRepos, { ...addedRepo, ...updates }]);
   }
 
   useEffect(() => {
@@ -75,19 +90,6 @@ export default function AccountPage() {
 
       isInitialized.current = true;
       setIsLoading(true);
-
-      // const { data: isAuthorizedData, error: isAuthorizedError } =
-      //   await serverApi.github.auth.isAuthorized();
-
-      // if (isAuthorizedError || !isAuthorizedData) {
-      //   showNotification({
-      //     message: "Unable to fetch authorization status",
-      //     color: "danger",
-      //   });
-      //   setIsLoading(false);
-      //   return;
-      // }
-      // setIsAuthorized(isAuthorizedData?.authorized);
 
       const { user, error } = await supabaseApi.auth.getUser(supabaseClient);
 
@@ -121,24 +123,6 @@ export default function AccountPage() {
     return <PageLoader label="Loading dashboard" />;
   }
 
-  // if (!isAuthorized) {
-  //   return (
-  //     <Link
-  //       href={githubAuthUrl}
-  //       className={buttonStyles({
-  //         className:
-  //           "min-w-fit absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2",
-  //         color: "primary",
-  //         radius: "full",
-  //         size: "lg",
-  //       })}
-  //     >
-  //       <GithubLogo className="flex-shrink-0" size={22} />
-  //       Authorize with GitHub
-  //     </Link>
-  //   );
-  // }
-
   if (repos.length === 0) {
     return (
       <>
@@ -149,12 +133,12 @@ export default function AccountPage() {
           size="lg"
           onPress={onOpen}
         >
-          <Plus className="flex-shrink-0" size={22} />
-          Add package.json
+          <Upload className="flex-shrink-0" size={22} />
+          Upload package.json
         </Button>
-        <AddReposModal
+        <UploadPackageJsonModal
           isOpen={isOpen}
-          onAdd={handleAdd}
+          onUpload={handleUpload}
           onOpenChange={onOpenChange}
         />
       </>
@@ -168,19 +152,18 @@ export default function AccountPage() {
           className="ml-auto"
           color="primary"
           radius="full"
-          size="sm"
           onPress={onOpen}
         >
-          <Plus size={18} />
-          Add package.json
+          <Upload size={20} />
+          Upload package.json
         </Button>
       </div>
-      <AddReposModal
+      <UploadPackageJsonModal
         isOpen={isOpen}
-        onAdd={handleAdd}
+        onUpload={handleUpload}
         onOpenChange={onOpenChange}
       />
-      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mt-4">
         {repos.map((repo) => (
           <RepoCard key={repo.id} repo={repo} />
         ))}

@@ -55,7 +55,7 @@ function UserContent({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen pb-14 lg:pb-0">
       <LoggedInNavbar brandName={siteConfig.name} />
-      <main className="relative h-[calc(100vh-122px)] lg:min-h-[75vh] lg:h-auto overflow-auto container mx-auto max-w-7xl px-6 pb-10">
+      <main className="relative h-[calc(100vh-122px)] lg:min-h-[75vh] lg:h-auto overflow-auto container mx-auto max-w-7xl px-6 pb-10 pt-4">
         {children}
       </main>
     </div>
