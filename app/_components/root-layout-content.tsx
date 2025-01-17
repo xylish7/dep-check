@@ -12,6 +12,7 @@ const mainRoutes = [
   ...siteConfig.routes.filter((route) => route.href !== "/account/dashboard"),
   ...siteConfig.legalRoutes,
 ].map((route) => route.href);
+mainRoutes.push("/sign-in");
 
 export default function RootLayoutContent({
   children,
