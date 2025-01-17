@@ -38,6 +38,7 @@ export function UploadPackageJsonModal({
     setIsAdding(true);
     await onUpload(file);
     setIsAdding(false);
+    setFile(null);
     onClose();
   }
 

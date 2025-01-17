@@ -81,6 +81,7 @@ export default function AccountPage() {
       return;
     }
 
+    console.log({ ...addedRepo, ...updates });
     setRepos((prevRepos) => [...prevRepos, { ...addedRepo, ...updates }]);
   }
 

@@ -15,7 +15,6 @@ interface RepoCardProps {
 }
 
 export function RepoCard({ repo }: RepoCardProps) {
-  console.log("🚀 ~ RepoCard ~ repo:", repo);
   const [packages, setPackages] = useState<Package[] | null>(repo.packages);
   const [lastCheck, setLastCheck] = useState(repo.last_check);
   const { showNotification } = useNotification();
@@ -41,7 +40,7 @@ export function RepoCard({ repo }: RepoCardProps) {
 
     setIsLoading(false);
     setPackages(data.packages);
-    setLastCheck(data.lastCheck);
+    setLastCheck(data.last_check);
   }
 
   return (

@@ -21,7 +21,7 @@ export const HeroSection = () => {
               animate={{ y: [120, 0], opacity: [0, 1], scale: [0.5, 1] }}
               transition={{ ease: "easeOut", duration: 0.5 }}
             >
-              <div className="relative w-36 h-36 lg:w-32 lg:h-32 mb-4 opacity-80 dark:opacity-70">
+              <div className="relative w-36 h-36 lg:w-32 lg:h-32 mb-4">
                 <Image
                   alt="Logo"
                   fill

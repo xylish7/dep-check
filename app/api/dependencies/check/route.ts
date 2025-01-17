@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
       last_check: lastCheck,
     });
 
-    return NextResponse.json({ data: { packages, lastCheck } });
+    return NextResponse.json({ data: { packages, last_check: lastCheck } });
   } catch (error) {
     console.error(error);
     return NextResponse.json(

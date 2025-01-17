@@ -25,19 +25,18 @@ import { timeAgo } from "@/utils/time-ago";
 const supabaseClient = browserClient();
 
 export default function RepositoryPage() {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isChecking, setIsChecking] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [lastCheck, setLastCheck] = useState<string | null>(null);
+  const [repo, setRepo] = useState<GithubReposRow | null>(null);
   const [packages, setPackages] = useState<GithubReposRow["packages"] | null>(
     null
   );
-
   const { id } = useParams() as { id: string };
-  const [repo, setRepo] = useState<GithubReposRow | null>(null);
   const { showNotification } = useNotification();
-  const router = useRouter();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const router = useRouter();
 
   async function handleCheck() {
     if (!repo) {
@@ -58,7 +57,7 @@ export default function RepositoryPage() {
 
     setIsChecking(false);
     setPackages(data.packages);
-    setLastCheck(data.lastCheck);
+    setLastCheck(data.last_check);
   }
 
   async function handleDelete() {
@@ -87,6 +86,73 @@ export default function RepositoryPage() {
     });
     setIsDeleting(false);
     router.push("/account/dashboard");
+  }
+
+  async function handleUpload(file: File) {
+    if (!repo) {
+      return;
+    }
+
+    const { error: sessionError, session } = await supabaseApi.auth.getSession(
+      supabaseClient
+    );
+
+    if (sessionError || !session) {
+      showNotification({
+        message: "Unable to fetch session",
+        color: "danger",
+      });
+      return;
+    }
+
+    const content = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (event: ProgressEvent<FileReader>) => {
+        resolve(event.target?.result as string);
+      };
+      reader.onerror = reject;
+      reader.readAsText(file);
+    });
+
+    const parsedContent = JSON.parse(content);
+
+    const { data: updatedRepo, error: addRepoError } =
+      await supabaseApi.github.repos.update(supabaseClient, repo.id, {
+        uuid: session.user.id,
+        name: parsedContent.name,
+        package_json: content as string,
+      });
+
+    if (addRepoError || !updatedRepo) {
+      if (addRepoError?.code === "23505") {
+        showNotification({
+          message: "Repository already exists",
+          color: "warning",
+        });
+        return;
+      }
+      showNotification({
+        message: "Unable to add repository",
+        color: "danger",
+      });
+      return;
+    }
+
+    const { data: updates, error } = await serverApi.dependencies.get(
+      updatedRepo.id
+    );
+
+    if (error || !updates) {
+      showNotification({
+        message: "Failed to check dependencies",
+        color: "danger",
+      });
+      return;
+    }
+
+    setRepo(updatedRepo);
+    setPackages(updates.packages);
+    setLastCheck(updates.last_check);
   }
 
   useEffect(() => {
@@ -187,7 +253,7 @@ export default function RepositoryPage() {
       </div>
       <UploadPackageJsonModal
         isOpen={isOpen}
-        onUpload={() => {}}
+        onUpload={handleUpload}
         onOpenChange={onOpenChange}
       />
     </div>
