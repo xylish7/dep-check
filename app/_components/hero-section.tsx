@@ -21,7 +21,7 @@ export const HeroSection = () => {
               animate={{ y: [120, 0], opacity: [0, 1], scale: [0.5, 1] }}
               transition={{ ease: "easeOut", duration: 0.5 }}
             >
-              <div className="relative w-36 h-36 lg:w-32 lg:h-32 mb-4">
+              <div className="relative w-20 h-20 lg:w-32 lg:h-32 mb-4">
                 <Image
                   alt="Logo"
                   fill
@@ -32,23 +32,14 @@ export const HeroSection = () => {
               </div>
             </motion.div>
 
-            <h1 className={title({ size: "lg" })}>
-              <span
-                className={title({
-                  size: "xl",
-                  color: "primary",
-                  className: "pl-1",
-                })}
-              >
-                {siteConfig.name}
-              </span>
+            <h1 className={title({ color: "primary", size: "xl" })}>
+              {siteConfig.name}
             </h1>
 
-            <span className="text-lg lg:text-xl lg:leading-[3rem]">
+            <span className="text-xl lg:text-2xl font-semibold mt-4">
               Never miss a new package update
             </span>
           </div>
-
           <div className="flex flex-row items-center justify-center mt-10 gap-8">
             <Link
               href="/account/dashboard"

@@ -9,11 +9,7 @@ export async function middleware(req: NextRequest) {
     return Response.redirect(new URL("/account/dashboard", req.url));
   }
 
-  if (
-    !user &&
-    req.nextUrl.pathname.startsWith("/account/dashboard") &&
-    req.nextUrl.pathname !== "/contact"
-  ) {
+  if (!user && req.nextUrl.pathname.startsWith("/account/dashboard")) {
     return Response.redirect(new URL("/sign-in", req.url));
   }
 

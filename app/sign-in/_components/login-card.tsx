@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { CardBody, CardFooter, CardHeader } from "@nextui-org/card";
 import { Button } from "@nextui-org/button";
 import { User } from "@supabase/supabase-js";
@@ -9,50 +9,47 @@ import Image from "next/image";
 
 import { PageLoader } from "@/components/page-loader";
 import { BlurredCard } from "@/components/blurred-card";
-import { useNotification } from "@/providers/notification";
 import { signIn } from "../actions";
-import { storage } from "@/utils/local-storage";
-import { LegalCheckbox } from "@/components/legal-checkbox";
 
 interface LoginCardProps {
   user: User | null;
 }
 
 export default function LoginCard({ user }: LoginCardProps) {
-  const [hasAccepted, setHasAccepted] = useState(false);
-  const [isSelected, setIsSelected] = useState(false);
-  const [checkboxError, setError] = useState(false);
-  const { showNotification } = useNotification();
+  // const [hasAccepted, setHasAccepted] = useState(false);
+  // const [isSelected, setIsSelected] = useState(false);
+  // const [checkboxError, setError] = useState(false);
+  // const { showNotification } = useNotification();
   const searchParams = useSearchParams();
   const router = useRouter();
   const route = searchParams.get("route");
 
-  useEffect(() => {
-    const accepted = storage.getSignUpTermsAccepted();
-    if (accepted) {
-      setHasAccepted(true);
-    }
-  }, []);
+  // useEffect(() => {
+  //   const accepted = storage.getSignUpTermsAccepted();
+  //   if (accepted) {
+  //     setHasAccepted(true);
+  //   }
+  // }, []);
 
-  function handleCheckboxChange(isSelected: boolean) {
-    setError(false);
-    setIsSelected(isSelected);
-  }
+  // function handleCheckboxChange(isSelected: boolean) {
+  //   setError(false);
+  //   setIsSelected(isSelected);
+  // }
 
   function handleSignIn() {
-    if (!hasAccepted && !isSelected) {
-      setError(true);
-      showNotification({
-        message:
-          "You must agree to the Terms and Conditions and Privacy Policy to continue.",
-        color: "warning",
-      });
-      return;
-    }
+    // if (!hasAccepted && !isSelected) {
+    //   setError(true);
+    //   showNotification({
+    //     message:
+    //       "You must agree to the Terms and Conditions and Privacy Policy to continue.",
+    //     color: "warning",
+    //   });
+    //   return;
+    // }
 
-    if (isSelected) {
-      storage.setSignUpTermsAccepted();
-    }
+    // if (isSelected) {
+    //   storage.setSignUpTermsAccepted();
+    // }
 
     signIn();
   }
@@ -82,13 +79,13 @@ export default function LoginCard({ user }: LoginCardProps) {
         </p>
       </CardBody>
       <CardFooter className="flex-col mt-8">
-        {!hasAccepted && (
+        {/* {!hasAccepted && (
           <LegalCheckbox
             isSelected={isSelected}
             isInvalid={checkboxError}
             onValueChange={handleCheckboxChange}
           />
-        )}
+        )} */}
         <Button
           className="mt-4"
           size="lg"
