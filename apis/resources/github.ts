@@ -1,7 +1,5 @@
 "use server";
 
-import { githubAppClientId, githubAppClientSecret } from "@/config/env";
-
 export type OAuthAccessTokenRes =
   | {
       access_token: string;
@@ -23,8 +21,8 @@ export async function getGithubAccessToken(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      client_id: githubAppClientId,
-      client_secret: githubAppClientSecret,
+      // client_id: githubAppClientId,
+      // client_secret: githubAppClientSecret,
       code,
     }),
   });
@@ -42,8 +40,8 @@ export async function refreshGithubAccessToken(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      client_id: githubAppClientId,
-      client_secret: githubAppClientSecret,
+      // client_id: githubAppClientId,
+      // client_secret: githubAppClientSecret,
       grant_type: "refresh_token",
       refresh_token: refreshToken,
     }),

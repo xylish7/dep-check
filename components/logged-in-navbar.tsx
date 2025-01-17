@@ -11,11 +11,10 @@ import {
 } from "@nextui-org/navbar";
 import { Link } from "@nextui-org/link";
 import { Button } from "@nextui-org/button";
-import { Books, Question, SignOut } from "@phosphor-icons/react/dist/ssr";
+import { Books, SignOut } from "@phosphor-icons/react/dist/ssr";
 
 import { signOut } from "@/app/api/auth/actions";
 import { ThemeSwitch } from "@/components/theme-switch";
-import { button } from "@nextui-org/theme";
 
 interface NavbarProps {
   brandName: string;
@@ -84,7 +83,6 @@ export const LoggedInNavbar = ({ brandName }: NavbarProps) => {
         justify="end"
       >
         <ThemeSwitch />
-        <ContactButton />
         <Button
           color="primary"
           size="sm"
@@ -97,7 +95,6 @@ export const LoggedInNavbar = ({ brandName }: NavbarProps) => {
 
       <NavbarContent className="lg:hidden basis-1 pl-4 gap-2" justify="end">
         <ThemeSwitch />
-        <ContactButton />
         <Button
           color="primary"
           isIconOnly
@@ -111,22 +108,6 @@ export const LoggedInNavbar = ({ brandName }: NavbarProps) => {
     </NextUINavbar>
   );
 };
-
-function ContactButton() {
-  return (
-    <Link
-      className={button({
-        isIconOnly: true,
-        size: "sm",
-        variant: "flat",
-      })}
-      href="/contact"
-      aria-label="Contact"
-    >
-      <Question size={18} />
-    </Link>
-  );
-}
 
 export const navItems = [
   {
