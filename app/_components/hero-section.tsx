@@ -9,6 +9,7 @@ import Image from "next/image";
 import { Section } from "@/components/section";
 import { siteConfig } from "@/config/site";
 import { title } from "@/utils/primitives";
+import { Card, CardBody } from "@nextui-org/card";
 
 export const HeroSection = () => {
   return (
@@ -55,6 +56,16 @@ export const HeroSection = () => {
             </Link>
           </div>
         </div>
+      </Section>
+      <Section>
+        <Card className="w-full mx-auto">
+          <CardBody className="flex flex-row items-center">
+            <iframe
+              className="w-full h-[600px] outline-none"
+              src="https://www.youtube.com/embed/2ktKRhoRUH4"
+            ></iframe>
+          </CardBody>
+        </Card>
       </Section>
     </>
   );
