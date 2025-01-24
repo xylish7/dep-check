@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: siteConfig.name,
     description: siteConfig.description,
-    // images: ogImageUrl,
+    images: "images/og-image.png",
     siteName: siteConfig.name,
     url: siteConfig.host,
   },
