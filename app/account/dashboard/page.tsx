@@ -18,11 +18,12 @@ import { useDisclosure } from "@heroui/modal";
 import { UploadPackageJsonModal } from "./_components/upload-package-json-modal";
 import { getCountPerVersion, RepoCard } from "@/components/repo-card";
 import { serverApi } from "@/apis/server";
+import { storage } from "@/utils/local-storage";
 
 const supabaseClient = browserClient();
 
 export default function AccountPage() {
-  const [sortBy, setSortBy] = useState<SortReposBy>("major dep updates");
+  const [sortBy, setSortBy] = useState<SortReposBy>(storage.getSortReposBy());
   const [repos, setRepos] = useState<GithubReposRow[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { showNotification } = useNotification();
@@ -91,6 +92,12 @@ export default function AccountPage() {
     setRepos((prevRepos) =>
       sortRepos([...prevRepos, { ...addedRepo, ...updates }], sortBy)
     );
+  }
+
+  function handleSortReposBy(sortBy: SortReposBy) {
+    setSortBy(sortBy);
+    storage.setSortReposBy(sortBy);
+    setRepos(sortRepos(repos, sortBy));
   }
 
   /**
@@ -170,13 +177,9 @@ export default function AccountPage() {
             selectedKeys={sortBy}
             selectionMode="single"
             variant="flat"
-            onSelectionChange={(selection) => {
-              if (selection.currentKey) {
-                const sortBy = selection.currentKey as SortReposBy;
-                setSortBy(sortBy);
-                setRepos(sortRepos(repos, sortBy));
-              }
-            }}
+            onSelectionChange={(selection) =>
+              handleSortReposBy(selection.currentKey as SortReposBy)
+            }
           >
             <DropdownItem key="name">name</DropdownItem>
             <DropdownItem key="major dep updates">
@@ -255,4 +258,7 @@ function sortRepos(repos: GithubReposRow[], sortBy: SortReposBy) {
   return repos;
 }
 
-type SortReposBy = "name" | "major dep updates" | "major dev dep updates";
+export type SortReposBy =
+  | "name"
+  | "major dep updates"
+  | "major dev dep updates";

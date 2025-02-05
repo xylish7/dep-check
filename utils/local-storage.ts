@@ -1,4 +1,23 @@
+import { SortReposBy } from "@/app/account/dashboard/page";
 import { isClient } from "./is-client";
+
+function getSortReposBy(): SortReposBy {
+  if (!isClient()) {
+    return "major dep updates";
+  }
+
+  return (
+    (localStorage.getItem("sortReposBy") as SortReposBy) || "major dep updates"
+  );
+}
+
+function setSortReposBy(sortBy: SortReposBy) {
+  if (!isClient()) {
+    return;
+  }
+
+  localStorage.setItem("sortReposBy", sortBy);
+}
 
 function getSignUpTermsAccepted() {
   if (!isClient()) {
@@ -41,4 +60,6 @@ export const storage = {
   setSignUpTermsAccepted,
   getCookiesConsent,
   setCookiesConsent,
+  getSortReposBy,
+  setSortReposBy,
 };
