@@ -8,9 +8,9 @@ import {
   NavbarContent,
   NavbarBrand,
   NavbarItem,
-} from "@nextui-org/navbar";
-import { Link } from "@nextui-org/link";
-import { Button } from "@nextui-org/button";
+} from "@heroui/navbar";
+import { Link } from "@heroui/link";
+import { Button } from "@heroui/button";
 import { Books, SignOut } from "@phosphor-icons/react/dist/ssr";
 
 import { signOut } from "@/app/api/auth/actions";

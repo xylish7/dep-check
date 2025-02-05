@@ -1,7 +1,7 @@
 "use client";
 
-import { button as buttonStyles } from "@nextui-org/theme";
-import { Link } from "@nextui-org/link";
+import { button as buttonStyles } from "@heroui/theme";
+import { Link } from "@heroui/link";
 import { UserCircle } from "@phosphor-icons/react/dist/ssr";
 import { motion } from "framer-motion";
 import Image from "next/image";
@@ -9,7 +9,7 @@ import Image from "next/image";
 import { Section } from "@/components/section";
 import { siteConfig } from "@/config/site";
 import { title } from "@/utils/primitives";
-import { Card, CardBody } from "@nextui-org/card";
+import { Card, CardBody } from "@heroui/card";
 
 export const HeroSection = () => {
   return (

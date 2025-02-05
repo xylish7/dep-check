@@ -5,8 +5,8 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-} from "@nextui-org/modal";
-import { Button } from "@nextui-org/button";
+} from "@heroui/modal";
+import { Button } from "@heroui/button";
 import { PackageJsonDropzone } from "@/components/package-json-dropzone";
 import { useNotification } from "@/providers/notification";
 

@@ -1,5 +1,5 @@
-import { Checkbox, CheckboxProps } from "@nextui-org/checkbox";
-import { Link } from "@nextui-org/link";
+import { Checkbox, CheckboxProps } from "@heroui/checkbox";
+import { Link } from "@heroui/link";
 import clsx from "clsx";
 
 export function LegalCheckbox({ className, ...rest }: CheckboxProps) {

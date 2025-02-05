@@ -11,10 +11,10 @@ import {
   NavbarBrand,
   NavbarItem,
   NavbarMenuItem,
-} from "@nextui-org/navbar";
-import { Link } from "@nextui-org/link";
-import { Button } from "@nextui-org/button";
-import { button as buttonStyles } from "@nextui-org/theme";
+} from "@heroui/navbar";
+import { Link } from "@heroui/link";
+import { Button } from "@heroui/button";
+import { button as buttonStyles } from "@heroui/theme";
 import { Heart, UserCircle } from "@phosphor-icons/react/dist/ssr";
 
 import { ThemeSwitch } from "@/components/theme-switch";

@@ -1,6 +1,6 @@
 import Image from "next/image";
-import { Link } from "@nextui-org/link";
-import { Divider } from "@nextui-org/divider";
+import { Link } from "@heroui/link";
+import { Divider } from "@heroui/divider";
 
 import { IconLinkType } from "@/types";
 import { IconLink } from "./icon-link";

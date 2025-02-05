@@ -1,6 +1,6 @@
 "use client";
 
-import { Alert, AlertProps } from "@nextui-org/alert";
+import { Alert, AlertProps } from "@heroui/alert";
 import { AnimatePresence, motion } from "framer-motion";
 import clsx from "clsx";
 import {
@@ -10,7 +10,7 @@ import {
   useContext,
   useRef,
 } from "react";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 import { X } from "@phosphor-icons/react/dist/ssr";
 import useMedia from "@/hooks/useMedia";
 

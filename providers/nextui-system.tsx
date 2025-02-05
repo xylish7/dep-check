@@ -1,16 +1,16 @@
-import { NextUIProvider as NextUIProviderSystem } from "@nextui-org/system";
+import { HeroUIProvider as HeroUIProviderSystem } from "@heroui/system";
 import { useRouter } from "next/navigation";
 
-interface NextUIProviderProps {
+interface HeroUIProviderProps {
   children: React.ReactNode;
 }
 
-export function NextUISystemProvider({ children }: NextUIProviderProps) {
+export function NextUISystemProvider({ children }: HeroUIProviderProps) {
   const router = useRouter();
 
   return (
-    <NextUIProviderSystem navigate={router.push}>
+    <HeroUIProviderSystem navigate={router.push}>
       {children}
-    </NextUIProviderSystem>
+    </HeroUIProviderSystem>
   );
 }

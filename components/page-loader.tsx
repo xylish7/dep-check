@@ -1,5 +1,5 @@
-import { Spinner } from "@nextui-org/spinner";
-import { SpinnerVariantProps } from "@nextui-org/theme";
+import { Spinner } from "@heroui/spinner";
+import { SpinnerVariantProps } from "@heroui/theme";
 import clsx from "clsx";
 
 interface PageLoaderProps {

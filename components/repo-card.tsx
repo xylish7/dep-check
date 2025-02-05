@@ -1,13 +1,13 @@
 import { useState } from "react";
-import { Button } from "@nextui-org/button";
-import { Card, CardBody, CardFooter, CardHeader } from "@nextui-org/card";
-import { button as buttonStyles } from "@nextui-org/theme";
+import { Button } from "@heroui/button";
+import { Card, CardBody, CardFooter, CardHeader } from "@heroui/card";
+import { button as buttonStyles } from "@heroui/theme";
 import { ArrowsClockwise, Eye } from "@phosphor-icons/react/dist/ssr";
 
 import { GithubReposRow, Package } from "@/apis/supabase";
 import { serverApi } from "@/apis/server";
 import { useNotification } from "@/providers/notification";
-import { Link } from "@nextui-org/link";
+import { Link } from "@heroui/link";
 import { timeAgo } from "@/utils/time-ago";
 
 interface RepoCardProps {

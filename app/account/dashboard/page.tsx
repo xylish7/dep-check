@@ -2,20 +2,27 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Upload } from "@phosphor-icons/react/dist/ssr";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
+import {
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+} from "@heroui/dropdown";
 
 import { useNotification } from "@/providers/notification";
 import { PageLoader } from "@/components/page-loader";
 import { GithubReposRow, supabaseApi } from "@/apis/supabase";
 import { browserClient } from "@/supabase/clients/browser";
-import { useDisclosure } from "@nextui-org/modal";
+import { useDisclosure } from "@heroui/modal";
 import { UploadPackageJsonModal } from "./_components/upload-package-json-modal";
-import { RepoCard } from "@/components/repo-card";
+import { getCountPerVersion, RepoCard } from "@/components/repo-card";
 import { serverApi } from "@/apis/server";
 
 const supabaseClient = browserClient();
 
 export default function AccountPage() {
+  const [sortBy, setSortBy] = useState<SortReposBy>("major dep updates");
   const [repos, setRepos] = useState<GithubReposRow[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { showNotification } = useNotification();
@@ -81,10 +88,14 @@ export default function AccountPage() {
       return;
     }
 
-    console.log({ ...addedRepo, ...updates });
-    setRepos((prevRepos) => [...prevRepos, { ...addedRepo, ...updates }]);
+    setRepos((prevRepos) =>
+      sortRepos([...prevRepos, { ...addedRepo, ...updates }], sortBy)
+    );
   }
 
+  /**
+   * Handle fetching user and repositories
+   */
   useEffect(() => {
     (async () => {
       if (isInitialized.current) return;
@@ -115,10 +126,10 @@ export default function AccountPage() {
         return;
       }
 
-      setRepos(reposData);
+      setRepos(sortRepos(reposData, sortBy));
       setIsLoading(false);
     })();
-  }, [showNotification]);
+  }, [showNotification, sortBy]);
 
   if (isLoading) {
     return <PageLoader label="Loading dashboard" />;
@@ -149,6 +160,33 @@ export default function AccountPage() {
   return (
     <div>
       <div className="flex justify-end">
+        <Dropdown>
+          <DropdownTrigger color="primary" variant="flat">
+            <Button>Sort by: {sortBy}</Button>
+          </DropdownTrigger>
+          <DropdownMenu
+            disallowEmptySelection
+            aria-label="Single selection example"
+            selectedKeys={sortBy}
+            selectionMode="single"
+            variant="flat"
+            onSelectionChange={(selection) => {
+              if (selection.currentKey) {
+                const sortBy = selection.currentKey as SortReposBy;
+                setSortBy(sortBy);
+                setRepos(sortRepos(repos, sortBy));
+              }
+            }}
+          >
+            <DropdownItem key="name">name</DropdownItem>
+            <DropdownItem key="major dep updates">
+              major deps updates
+            </DropdownItem>
+            <DropdownItem key="major dev dep updates">
+              major dev deps updates
+            </DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
         <Button
           className="ml-auto"
           color="primary"
@@ -172,3 +210,49 @@ export default function AccountPage() {
     </div>
   );
 }
+
+function sortRepos(repos: GithubReposRow[], sortBy: SortReposBy) {
+  if (sortBy === "name") {
+    return repos.toSorted((a, b) => a.name.localeCompare(b.name));
+  }
+
+  if (sortBy === "major dep updates") {
+    return repos.toSorted((a, b) => {
+      let aUpdates = 0;
+      let bUpdates = 0;
+
+      if (a.packages) {
+        const aCountPerVersion = getCountPerVersion(a.packages);
+        aUpdates = aCountPerVersion.dep.major;
+      }
+      if (b.packages) {
+        const bCountPerVersion = getCountPerVersion(b.packages);
+        bUpdates = bCountPerVersion.dep.major;
+      }
+
+      return bUpdates - aUpdates;
+    });
+  }
+
+  if (sortBy === "major dev dep updates") {
+    return repos.toSorted((a, b) => {
+      let aUpdates = 0;
+      let bUpdates = 0;
+
+      if (a.packages) {
+        const aCountPerVersion = getCountPerVersion(a.packages);
+        aUpdates = aCountPerVersion.devDep.major;
+      }
+      if (b.packages) {
+        const bCountPerVersion = getCountPerVersion(b.packages);
+        bUpdates = bCountPerVersion.devDep.major;
+      }
+
+      return bUpdates - aUpdates;
+    });
+  }
+
+  return repos;
+}
+
+type SortReposBy = "name" | "major dep updates" | "major dev dep updates";

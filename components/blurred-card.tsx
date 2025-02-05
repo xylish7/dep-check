@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { Card, CardProps } from "@nextui-org/card";
+import { Card, CardProps } from "@heroui/card";
 
 export const BlurredCard = ({ children, className, ...rest }: CardProps) => {
   return (

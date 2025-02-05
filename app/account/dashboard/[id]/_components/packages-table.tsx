@@ -1,5 +1,5 @@
 import { Package } from "@/apis/supabase";
-import { Chip, ChipProps } from "@nextui-org/chip";
+import { Chip, ChipProps } from "@heroui/chip";
 import {
   SortDescriptor,
   Table,
@@ -8,9 +8,9 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
-} from "@nextui-org/table";
+} from "@heroui/table";
 import { useCallback, useMemo, useState } from "react";
-import { Pagination } from "@nextui-org/pagination";
+import { Pagination } from "@heroui/pagination";
 
 export const statusOptions = [
   { name: "Active", uid: "active" },

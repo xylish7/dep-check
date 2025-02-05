@@ -1,8 +1,8 @@
 "use client"; // Error components must be Client Components
 
 import { title } from "@/utils/primitives";
-import { Button } from "@nextui-org/button";
-import { Link } from "@nextui-org/link";
+import { Button } from "@heroui/button";
+import { Link } from "@heroui/link";
 import { usePathname } from "next/navigation";
 import { Headset, Warning } from "@phosphor-icons/react/dist/ssr";
 

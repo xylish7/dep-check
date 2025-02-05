@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Button } from "@nextui-org/button";
-import { Card, CardBody } from "@nextui-org/card";
-import { useDisclosure } from "@nextui-org/modal";
+import { Button } from "@heroui/button";
+import { Card, CardBody } from "@heroui/card";
+import { useDisclosure } from "@heroui/modal";
 import {
   ArrowLeft,
   ArrowsClockwise,

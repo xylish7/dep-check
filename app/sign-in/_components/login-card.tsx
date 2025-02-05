@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
-import { CardBody, CardFooter, CardHeader } from "@nextui-org/card";
-import { Button } from "@nextui-org/button";
+import { CardBody, CardFooter, CardHeader } from "@heroui/card";
+import { Button } from "@heroui/button";
 import { User } from "@supabase/supabase-js";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
