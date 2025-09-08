@@ -1,37 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
 import { run as ncuRun } from "npm-check-updates";
 
-import { Dependency, Package, supabaseApi, Version } from "@/apis/supabase";
-import { serverClient } from "@/supabase/clients/server";
+import {
+  Dependency,
+  GithubRepoRow,
+  Package,
+  Version,
+} from "@/apis/local-storage";
 
 export async function POST(req: NextRequest) {
-  const payload = (await req.json()) as { repoId: number };
-  const { repoId } = payload;
+  const payload = (await req.json()) as { repo: GithubRepoRow };
+  const { repo } = payload;
 
-  if (!repoId) {
+  if (!repo) {
     return NextResponse.json(
-      { message: "repoId is required" },
+      { message: "'repo' is required" },
       { status: 404 }
     );
   }
 
   try {
-    const supabaseClient = await serverClient();
-
-    const { user } = await supabaseApi.auth.getUser(supabaseClient);
-    if (!user) {
-      return NextResponse.json({ message: "User not found" }, { status: 404 });
-    }
-
-    const { data: repo, error } = await supabaseApi.github.repos.get(
-      supabaseClient,
-      repoId
-    );
-
-    if (error || !repo) {
-      return NextResponse.json({ message: "Repo not found" }, { status: 404 });
-    }
-
     const parsedPackageJson = JSON.parse(repo.package_json);
     // Run ncu on the fetched package.json
     const latestVersions = await ncuRun({
@@ -54,12 +42,10 @@ export async function POST(req: NextRequest) {
     ];
 
     const lastCheck = new Date().toISOString();
-    supabaseApi.github.repos.update(supabaseClient, repoId, {
-      packages,
-      last_check: lastCheck,
-    });
+    repo.packages = packages;
+    repo.last_check = lastCheck;
 
-    return NextResponse.json({ data: { packages, last_check: lastCheck } });
+    return NextResponse.json({ data: repo, error: null });
   } catch (error) {
     console.error(error);
     return NextResponse.json(

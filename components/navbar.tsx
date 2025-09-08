@@ -15,7 +15,11 @@ import {
 import { Link } from "@heroui/link";
 import { Button } from "@heroui/button";
 import { button as buttonStyles } from "@heroui/theme";
-import { Heart, UserCircle } from "@phosphor-icons/react/dist/ssr";
+import {
+  ArrowsClockwise,
+  Heart,
+  UserCircle,
+} from "@phosphor-icons/react/dist/ssr";
 
 import { ThemeSwitch } from "@/components/theme-switch";
 import { IconLinkType } from "@/types";
@@ -198,8 +202,8 @@ function AccountButton() {
         })}
         href="/account/dashboard"
       >
-        <UserCircle size={18} />
-        My account
+        <ArrowsClockwise size={18} />
+        Start now!
       </Link>
     </>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@heroui/button";
 import { Card, CardBody } from "@heroui/card";
@@ -12,28 +12,25 @@ import {
   Upload,
 } from "@phosphor-icons/react/dist/ssr";
 
-import { browserClient } from "@/supabase/clients/browser";
-import { GithubReposRow, supabaseApi } from "@/apis/supabase";
 import { useNotification } from "@/providers/notification";
-import { PageLoader } from "@/components/page-loader";
 import { DependencyInfo, getCountPerVersion } from "@/components/repo-card";
 import { serverApi } from "@/apis/server";
 import { UploadPackageJsonModal } from "../_components/upload-package-json-modal";
 import { PackagesTable } from "./_components/packages-table";
 import { timeAgo } from "@/utils/time-ago";
-
-const supabaseClient = browserClient();
+import { GithubRepoRow, localStorageApi } from "@/apis/local-storage";
 
 export default function RepositoryPage() {
-  const [isLoading, setIsLoading] = useState(true);
   const [isChecking, setIsChecking] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [lastCheck, setLastCheck] = useState<string | null>(null);
-  const [repo, setRepo] = useState<GithubReposRow | null>(null);
-  const [packages, setPackages] = useState<GithubReposRow["packages"] | null>(
-    null
-  );
   const { id } = useParams() as { id: string };
+  const [repo, setRepo] = useState<GithubRepoRow | null>(
+    localStorageApi.repos.get(Number(id)).data
+  );
+  const [packages, setPackages] = useState<GithubRepoRow["packages"] | null>(
+    repo?.packages ?? null
+  );
   const { showNotification } = useNotification();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const router = useRouter();
@@ -44,7 +41,7 @@ export default function RepositoryPage() {
     }
 
     setIsChecking(true);
-    const { data, error } = await serverApi.dependencies.get(repo.id);
+    const { data, error } = await serverApi.dependencies.get(repo);
 
     if (error || !data) {
       showNotification({
@@ -66,10 +63,7 @@ export default function RepositoryPage() {
     }
 
     setIsDeleting(true);
-    const { error } = await supabaseApi.github.repos.delete(
-      supabaseClient,
-      repo.id
-    );
+    const { error } = localStorageApi.repos.delete(repo.id);
 
     if (error) {
       showNotification({
@@ -93,18 +87,6 @@ export default function RepositoryPage() {
       return;
     }
 
-    const { error: sessionError, session } = await supabaseApi.auth.getSession(
-      supabaseClient
-    );
-
-    if (sessionError || !session) {
-      showNotification({
-        message: "Unable to fetch session",
-        color: "danger",
-      });
-      return;
-    }
-
     const content = await new Promise<string>((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = (event: ProgressEvent<FileReader>) => {
@@ -117,20 +99,12 @@ export default function RepositoryPage() {
     const parsedContent = JSON.parse(content);
 
     const { data: updatedRepo, error: addRepoError } =
-      await supabaseApi.github.repos.update(supabaseClient, repo.id, {
-        uuid: session.user.id,
+      localStorageApi.repos.update(repo.id, {
         name: parsedContent.name,
         package_json: content as string,
       });
 
     if (addRepoError || !updatedRepo) {
-      if (addRepoError?.code === "23505") {
-        showNotification({
-          message: "Repository already exists",
-          color: "warning",
-        });
-        return;
-      }
       showNotification({
         message: "Unable to add repository",
         color: "danger",
@@ -139,7 +113,7 @@ export default function RepositoryPage() {
     }
 
     const { data: updates, error } = await serverApi.dependencies.get(
-      updatedRepo.id
+      updatedRepo
     );
 
     if (error || !updates) {
@@ -153,33 +127,6 @@ export default function RepositoryPage() {
     setRepo(updatedRepo);
     setPackages(updates.packages);
     setLastCheck(updates.last_check);
-  }
-
-  useEffect(() => {
-    (async () => {
-      setIsLoading(true);
-      const { data, error } = await supabaseApi.github.repos.get(
-        supabaseClient,
-        Number(id)
-      );
-
-      if (error || !data) {
-        showNotification({
-          message: "Failed to load repository",
-          color: "danger",
-        });
-        return;
-      }
-
-      setRepo(data);
-      setPackages(data.packages);
-      setLastCheck(data.last_check);
-      setIsLoading(false);
-    })();
-  }, [id]);
-
-  if (isLoading) {
-    return <PageLoader label="Loading..." />;
   }
 
   if (!repo) {

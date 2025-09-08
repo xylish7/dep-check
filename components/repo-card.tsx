@@ -4,14 +4,14 @@ import { Card, CardBody, CardFooter, CardHeader } from "@heroui/card";
 import { button as buttonStyles } from "@heroui/theme";
 import { ArrowsClockwise, Eye } from "@phosphor-icons/react/dist/ssr";
 
-import { GithubReposRow, Package } from "@/apis/supabase";
 import { serverApi } from "@/apis/server";
 import { useNotification } from "@/providers/notification";
 import { Link } from "@heroui/link";
 import { timeAgo } from "@/utils/time-ago";
+import { GithubRepoRow, Package } from "@/apis/local-storage";
 
 interface RepoCardProps {
-  repo: GithubReposRow;
+  repo: GithubRepoRow;
 }
 
 export function RepoCard({ repo }: RepoCardProps) {
@@ -27,7 +27,7 @@ export function RepoCard({ repo }: RepoCardProps) {
 
   async function handleCheck() {
     setIsLoading(true);
-    const { data, error } = await serverApi.dependencies.get(repo.id);
+    const { data, error } = await serverApi.dependencies.get(repo);
 
     if (error || !data) {
       showNotification({

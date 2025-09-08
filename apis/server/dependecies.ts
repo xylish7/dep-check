@@ -1,7 +1,7 @@
-import { Package } from "../supabase";
+import { GithubRepoRow } from "../local-storage";
 
-export async function getUpdates(repoId: number): Promise<{
-  data: { packages: Package[]; last_check: string } | null;
+export async function getUpdates(repo: GithubRepoRow): Promise<{
+  data: GithubRepoRow | null;
   error: unknown | null;
 }> {
   try {
@@ -10,7 +10,7 @@ export async function getUpdates(repoId: number): Promise<{
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ repoId }),
+      body: JSON.stringify({ repo }),
     });
 
     if (!response.ok) {

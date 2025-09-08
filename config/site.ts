@@ -20,7 +20,10 @@ export const siteConfig: SiteConfig = {
   // Legal routes. Can be found in the footer
   legalRoutes: [],
   // Social media links. Feel free to remove or add your own. Check IconLinkType for available icons
-  socialLinks: {},
+  socialLinks: {
+    x: "https://twitter.com/filiphfr",
+    github: "https://github.com/xylish7/dep-check",
+  },
   // Links to download or use the app that is being promoted. Can be found in the hero section
   appLinks: {
     appStore: "#",

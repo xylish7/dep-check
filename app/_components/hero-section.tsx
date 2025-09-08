@@ -2,14 +2,13 @@
 
 import { button as buttonStyles } from "@heroui/theme";
 import { Link } from "@heroui/link";
-import { UserCircle } from "@phosphor-icons/react/dist/ssr";
+import { ArrowsClockwise } from "@phosphor-icons/react/dist/ssr";
 import { motion } from "framer-motion";
 import Image from "next/image";
 
 import { Section } from "@/components/section";
 import { siteConfig } from "@/config/site";
 import { title } from "@/utils/primitives";
-import { Card, CardBody } from "@heroui/card";
 
 export const HeroSection = () => {
   return (
@@ -38,7 +37,7 @@ export const HeroSection = () => {
             </h1>
 
             <span className="text-xl lg:text-2xl font-semibold mt-4">
-              Never miss a new package update
+              Never miss a new package update. And is free!
             </span>
           </div>
           <div className="flex flex-row items-center justify-center mt-10 gap-8">
@@ -51,21 +50,11 @@ export const HeroSection = () => {
                 radius: "full",
               })}
             >
-              <UserCircle className="flex-shrink-0" size={22} />
-              My account
+              <ArrowsClockwise className="flex-shrink-0" size={22} />
+              Start now!
             </Link>
           </div>
         </div>
-      </Section>
-      <Section>
-        <Card className="w-full mx-auto">
-          <CardBody className="flex flex-row items-center">
-            <iframe
-              className="w-full h-[600px] outline-none"
-              src="https://www.youtube.com/embed/2ktKRhoRUH4"
-            ></iframe>
-          </CardBody>
-        </Card>
       </Section>
     </>
   );

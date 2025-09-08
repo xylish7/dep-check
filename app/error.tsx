@@ -4,7 +4,9 @@ import { title } from "@/utils/primitives";
 import { Button } from "@heroui/button";
 import { Link } from "@heroui/link";
 import { usePathname } from "next/navigation";
-import { Headset, Warning } from "@phosphor-icons/react/dist/ssr";
+import { TrashSimple, Warning } from "@phosphor-icons/react/dist/ssr";
+import { GithubLogo } from "@phosphor-icons/react";
+import { REPOS_STORAGE_KEY } from "@/apis/local-storage/github-repos";
 
 export default function Error({
   error,
@@ -21,16 +23,30 @@ export default function Error({
         <span className="text-xl text-default-500 font-semibold mb-8 mt-2">
           Something went wrong
         </span>
-        <Button
-          color="primary"
-          as={Link}
-          href={`/contact/?path=${pathName}&errorMessage=${error.message}`}
-          size="lg"
-          startContent={<Headset size={28} />}
-          variant="flat"
-        >
-          Contact us
-        </Button>
+        <div className="flex gap-4 mt-6">
+          <Button
+            onPress={() => {
+              localStorage.removeItem(REPOS_STORAGE_KEY);
+              window.location.reload();
+            }}
+            size="lg"
+            variant="ghost"
+          >
+            <TrashSimple size={28} /> Clear Storage and Refresh
+          </Button>
+          <Button
+            as={Link}
+            href={`https://github.com/xylish7/dep-check/issues/new?body=${encodeURIComponent(
+              `📍 Location: \`${pathName}\`\n⚠️ Reported error: \`${error.message}\``
+            )}`}
+            isExternal
+            size="lg"
+            startContent={<GithubLogo size={28} />}
+            variant="ghost"
+          >
+            Report on github
+          </Button>
+        </div>
       </div>
     </div>
   );

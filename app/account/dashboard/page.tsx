@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { Upload } from "@phosphor-icons/react/dist/ssr";
 import { Button } from "@heroui/button";
 import {
@@ -9,41 +9,25 @@ import {
   DropdownMenu,
   DropdownTrigger,
 } from "@heroui/dropdown";
+import { useDisclosure } from "@heroui/modal";
 
 import { useNotification } from "@/providers/notification";
-import { PageLoader } from "@/components/page-loader";
-import { GithubReposRow, supabaseApi } from "@/apis/supabase";
-import { browserClient } from "@/supabase/clients/browser";
-import { useDisclosure } from "@heroui/modal";
 import { UploadPackageJsonModal } from "./_components/upload-package-json-modal";
 import { getCountPerVersion, RepoCard } from "@/components/repo-card";
 import { serverApi } from "@/apis/server";
 import { storage } from "@/utils/local-storage";
-
-const supabaseClient = browserClient();
+import { GithubRepoRow, localStorageApi } from "@/apis/local-storage";
 
 export default function AccountPage() {
   const [sortBy, setSortBy] = useState<SortReposBy>(storage.getSortReposBy());
-  const [repos, setRepos] = useState<GithubReposRow[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [repos, setRepos] = useState<GithubRepoRow[]>(
+    localStorageApi.repos.getAll().data
+  );
   const { showNotification } = useNotification();
-  const isInitialized = useRef(false);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   // Handle adding a repo
   async function handleUpload(file: File) {
-    const { error: sessionError, session } = await supabaseApi.auth.getSession(
-      supabaseClient
-    );
-
-    if (sessionError || !session) {
-      showNotification({
-        message: "Unable to fetch session",
-        color: "danger",
-      });
-      return;
-    }
-
     const content = await new Promise<string>((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = (event: ProgressEvent<FileReader>) => {
@@ -55,33 +39,26 @@ export default function AccountPage() {
 
     const parsedContent = JSON.parse(content);
 
-    const { data: addedRepo, error: addRepoError } =
-      await supabaseApi.github.repos.add(supabaseClient, {
-        uuid: session.user.id,
-        name: parsedContent.name,
-        package_json: content as string,
-      });
+    const { data: addedRepo } = localStorageApi.repos.add({
+      name: parsedContent.name,
+      package_json: content as string,
+      last_check: null,
+      packages: null,
+    });
 
-    if (addRepoError || !addedRepo) {
-      if (addRepoError?.code === "23505") {
-        showNotification({
-          message: "Repository already exists",
-          color: "warning",
-        });
-        return;
-      }
+    if (!addedRepo) {
       showNotification({
-        message: "Unable to add repository",
+        message: "Failed to add repo",
         color: "danger",
       });
       return;
     }
 
-    const { data: updates, error } = await serverApi.dependencies.get(
-      addedRepo.id
+    const { data: updatedRepo, error } = await serverApi.dependencies.get(
+      addedRepo
     );
 
-    if (error || !updates) {
+    if (error || !updatedRepo) {
       showNotification({
         message: "Failed to check dependencies",
         color: "danger",
@@ -89,8 +66,10 @@ export default function AccountPage() {
       return;
     }
 
+    localStorageApi.repos.update(updatedRepo.id, updatedRepo);
+
     setRepos((prevRepos) =>
-      sortRepos([...prevRepos, { ...addedRepo, ...updates }], sortBy)
+      sortRepos([...prevRepos, { ...updatedRepo }], sortBy)
     );
   }
 
@@ -98,48 +77,6 @@ export default function AccountPage() {
     setSortBy(sortBy);
     storage.setSortReposBy(sortBy);
     setRepos(sortRepos(repos, sortBy));
-  }
-
-  /**
-   * Handle fetching user and repositories
-   */
-  useEffect(() => {
-    (async () => {
-      if (isInitialized.current) return;
-
-      isInitialized.current = true;
-      setIsLoading(true);
-
-      const { user, error } = await supabaseApi.auth.getUser(supabaseClient);
-
-      if (error || !user) {
-        showNotification({
-          message: "Unable to fetch user",
-          color: "danger",
-        });
-        setIsLoading(false);
-        return;
-      }
-
-      const { data: reposData, error: reposError } =
-        await supabaseApi.github.repos.getAll(supabaseClient, user.id);
-
-      if (reposError || !reposData) {
-        showNotification({
-          message: "Unable to fetch repositories",
-          color: "danger",
-        });
-        setIsLoading(false);
-        return;
-      }
-
-      setRepos(sortRepos(reposData, sortBy));
-      setIsLoading(false);
-    })();
-  }, [showNotification, sortBy]);
-
-  if (isLoading) {
-    return <PageLoader label="Loading dashboard" />;
   }
 
   if (repos.length === 0) {
@@ -214,7 +151,7 @@ export default function AccountPage() {
   );
 }
 
-function sortRepos(repos: GithubReposRow[], sortBy: SortReposBy) {
+function sortRepos(repos: GithubRepoRow[], sortBy: SortReposBy) {
   if (sortBy === "name") {
     return repos.toSorted((a, b) => a.name.localeCompare(b.name));
   }
