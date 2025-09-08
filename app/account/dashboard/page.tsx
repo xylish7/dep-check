@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Upload } from "@phosphor-icons/react/dist/ssr";
 import { Button } from "@heroui/button";
 import {
@@ -19,10 +19,15 @@ import { storage } from "@/utils/local-storage";
 import { GithubRepoRow, localStorageApi } from "@/apis/local-storage";
 
 export default function AccountPage() {
-  const [sortBy, setSortBy] = useState<SortReposBy>(storage.getSortReposBy());
-  const [repos, setRepos] = useState<GithubRepoRow[]>(
-    localStorageApi.repos.getAll().data
-  );
+  const [sortBy, setSortBy] = useState<SortReposBy>("name");
+  const [repos, setRepos] = useState<GithubRepoRow[]>([]);
+  // Hydration-safe: load from localStorage on client only
+  useEffect(() => {
+    const storedSort = storage.getSortReposBy();
+    setSortBy(storedSort);
+    const storedRepos = localStorageApi.repos.getAll().data;
+    setRepos(sortRepos(storedRepos, storedSort));
+  }, []);
   const { showNotification } = useNotification();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
