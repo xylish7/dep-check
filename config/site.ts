@@ -2,7 +2,7 @@ import { IconLinkType } from "@/types";
 
 export const siteConfig: SiteConfig = {
   // Host where the site is deployed
-  host: "https://depcheck.indiedev.pro",
+  host: "https://depcheck.filipf.com",
   // Will be used in navbar, hero section and footer
   name: "DepCheck",
   // Will be used in hero section
