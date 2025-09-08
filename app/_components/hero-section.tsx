@@ -2,7 +2,7 @@
 
 import { button as buttonStyles } from "@heroui/theme";
 import { Link } from "@heroui/link";
-import { ArrowsClockwise } from "@phosphor-icons/react/dist/ssr";
+import { SquaresFour } from "@phosphor-icons/react/dist/ssr";
 import { motion } from "framer-motion";
 import Image from "next/image";
 
@@ -37,7 +37,7 @@ export const HeroSection = () => {
             </h1>
 
             <span className="text-xl lg:text-2xl font-semibold mt-4">
-              Never miss a new package update. And is free!
+              Never miss a new package update!
             </span>
           </div>
           <div className="flex flex-row items-center justify-center mt-10 gap-8">
@@ -50,8 +50,8 @@ export const HeroSection = () => {
                 radius: "full",
               })}
             >
-              <ArrowsClockwise className="flex-shrink-0" size={22} />
-              Start now!
+              <SquaresFour className="flex-shrink-0" size={22} />
+              View Dashboard
             </Link>
           </div>
         </div>

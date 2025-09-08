@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@heroui/button";
 import { Card, CardBody } from "@heroui/card";
@@ -25,15 +25,18 @@ export default function RepositoryPage() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [lastCheck, setLastCheck] = useState<string | null>(null);
   const { id } = useParams() as { id: string };
-  const [repo, setRepo] = useState<GithubRepoRow | null>(
-    localStorageApi.repos.get(Number(id)).data
-  );
-  const [packages, setPackages] = useState<GithubRepoRow["packages"] | null>(
-    repo?.packages ?? null
-  );
+  const [repo, setRepo] = useState<GithubRepoRow | null>();
+  const [packages, setPackages] = useState<GithubRepoRow["packages"] | null>();
   const { showNotification } = useNotification();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const router = useRouter();
+
+  useEffect(() => {
+    const repo = localStorageApi.repos.get(Number(id)).data;
+    setRepo(repo);
+    setPackages(repo?.packages ?? null);
+    setLastCheck(repo?.last_check ?? null);
+  }, [id]);
 
   async function handleCheck() {
     if (!repo) {

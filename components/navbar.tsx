@@ -15,11 +15,7 @@ import {
 import { Link } from "@heroui/link";
 import { Button } from "@heroui/button";
 import { button as buttonStyles } from "@heroui/theme";
-import {
-  ArrowsClockwise,
-  Heart,
-  UserCircle,
-} from "@phosphor-icons/react/dist/ssr";
+import { Heart, UserCircle } from "@phosphor-icons/react/dist/ssr";
 
 import { ThemeSwitch } from "@/components/theme-switch";
 import { IconLinkType } from "@/types";
@@ -193,7 +189,7 @@ function AccountButton() {
       >
         <UserCircle size={18} />
       </Link>
-      <Link
+      {/* <Link
         className={buttonStyles({
           className: "hidden lg:flex",
           color: "primary",
@@ -204,7 +200,7 @@ function AccountButton() {
       >
         <ArrowsClockwise size={18} />
         Start now!
-      </Link>
+      </Link> */}
     </>
   );
 }
