@@ -39,7 +39,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html className={fontPoppins.className} lang="en" suppressHydrationWarning>
       <head />
       <body className="min-h-screen bg-background antialiased">
-        <Providers themeProps={{ attribute: "class", defaultTheme: "light" }}>
+        <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
           <Notification />
           <RootLayoutContent>{children}</RootLayoutContent>
         </Providers>
