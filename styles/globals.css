@@ -6,4 +6,4 @@
 
 @custom-variant dark (&:is(.dark *));
 
-@config "../../tailwind.config.js";
+@config "../tailwind.config.js";
