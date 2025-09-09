@@ -15,7 +15,7 @@ import { Books, SignOut } from "@phosphor-icons/react/dist/ssr";
 
 import { signOut } from "@/app/api/auth/actions";
 import { ThemeSwitch } from "@/components/theme-switch";
-import { PersonalWebsiteLink } from "./PersonalWebsiteLink";
+import { PersonalWebsiteLink } from "./personal-website-link";
 
 interface NavbarProps {
   brandName: string;

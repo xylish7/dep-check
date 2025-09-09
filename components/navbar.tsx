@@ -20,7 +20,7 @@ import { Heart, UserCircle } from "@phosphor-icons/react/dist/ssr";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { IconLinkType } from "@/types";
 import { IconLink } from "./icon-link";
-import { PersonalWebsiteLink } from "./PersonalWebsiteLink";
+import { PersonalWebsiteLink } from "./personal-website-link";
 
 interface NavbarProps {
   brandName: string;
