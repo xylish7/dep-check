@@ -17,7 +17,7 @@ export const HeroSection = () => {
         <div className="flex flex-col items-center justify-center gap-4">
           <div className="flex flex-col max-w-3xl text-center items-center">
             <motion.div
-              className="opacity-0 translate-y-40"
+              className="opacity-0"
               animate={{ y: [120, 0], opacity: [0, 1], scale: [0.5, 1] }}
               transition={{ ease: "easeOut", duration: 0.5 }}
             >
@@ -50,7 +50,7 @@ export const HeroSection = () => {
                 radius: "full",
               })}
             >
-              <SquaresFour className="flex-shrink-0" size={22} />
+              <SquaresFour className="shrink-0" size={22} />
               View Dashboard
             </Link>
           </div>

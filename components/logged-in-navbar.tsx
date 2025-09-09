@@ -15,6 +15,7 @@ import { Books, SignOut } from "@phosphor-icons/react/dist/ssr";
 
 import { signOut } from "@/app/api/auth/actions";
 import { ThemeSwitch } from "@/components/theme-switch";
+import { PersonalWebsiteLink } from "./PersonalWebsiteLink";
 
 interface NavbarProps {
   brandName: string;
@@ -56,7 +57,7 @@ export const LoggedInNavbar = ({ brandName }: NavbarProps) => {
 
           return (
             <NavbarItem
-              className="data-[active=true]:text-primary !font-medium"
+              className="data-[active=true]:text-primary font-medium!"
               isActive={
                 isHome
                   ? true
@@ -82,6 +83,7 @@ export const LoggedInNavbar = ({ brandName }: NavbarProps) => {
         className="hidden lg:flex basis-1/5 sm:basis-full gap-2"
         justify="end"
       >
+        <PersonalWebsiteLink />
         <ThemeSwitch />
         <Button
           color="primary"
@@ -94,6 +96,7 @@ export const LoggedInNavbar = ({ brandName }: NavbarProps) => {
       </NavbarContent>
 
       <NavbarContent className="lg:hidden basis-1 pl-4 gap-2" justify="end">
+        <PersonalWebsiteLink />
         <ThemeSwitch />
         <Button
           color="primary"

@@ -94,7 +94,7 @@ export default function AccountPage() {
           size="lg"
           onPress={onOpen}
         >
-          <Upload className="flex-shrink-0" size={22} />
+          <Upload className="shrink-0" size={22} />
           Upload package.json
         </Button>
         <UploadPackageJsonModal

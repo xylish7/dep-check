@@ -20,6 +20,7 @@ import { Heart, UserCircle } from "@phosphor-icons/react/dist/ssr";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { IconLinkType } from "@/types";
 import { IconLink } from "./icon-link";
+import { PersonalWebsiteLink } from "./PersonalWebsiteLink";
 
 interface NavbarProps {
   brandName: string;
@@ -67,7 +68,7 @@ export const Navbar = ({
 
           return (
             <NavbarItem
-              className="data-[active=true]:text-primary !font-medium"
+              className="data-[active=true]:text-primary font-medium!"
               isActive={
                 isHome ? true : pathname === item.href && item.href !== "/"
               }
@@ -94,6 +95,7 @@ export const Navbar = ({
           {socials.map((social, index) => (
             <IconLink key={index} {...social} size={22} />
           ))}
+          <PersonalWebsiteLink />
         </NavbarItem>
         <NavbarItem className="hidden lg:flex mb-1">
           <ThemeSwitch />
@@ -128,7 +130,10 @@ export const Navbar = ({
             </Link>
           </NavbarItem>
         ) : null}
-        <NavbarItem className="h-6">
+        <NavbarItem className="items-center flex">
+          <PersonalWebsiteLink />
+        </NavbarItem>
+        <NavbarItem className="items-center flex">
           <ThemeSwitch />
         </NavbarItem>
         <NavbarItem></NavbarItem>

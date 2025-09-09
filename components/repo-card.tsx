@@ -8,7 +8,7 @@ import { serverApi } from "@/apis/server";
 import { useNotification } from "@/providers/notification";
 import { Link } from "@heroui/link";
 import { timeAgo } from "@/utils/time-ago";
-import { GithubRepoRow, Package } from "@/apis/local-storage";
+import { GithubRepoRow, localStorageApi, Package } from "@/apis/local-storage";
 
 interface RepoCardProps {
   repo: GithubRepoRow;
@@ -27,9 +27,9 @@ export function RepoCard({ repo }: RepoCardProps) {
 
   async function handleCheck() {
     setIsLoading(true);
-    const { data, error } = await serverApi.dependencies.get(repo);
+    const { data: updatedRepo, error } = await serverApi.dependencies.get(repo);
 
-    if (error || !data) {
+    if (error || !updatedRepo) {
       showNotification({
         message: "Failed to check dependencies",
         color: "danger",
@@ -39,8 +39,9 @@ export function RepoCard({ repo }: RepoCardProps) {
     }
 
     setIsLoading(false);
-    setPackages(data.packages);
-    setLastCheck(data.last_check);
+    setPackages(updatedRepo.packages);
+    setLastCheck(updatedRepo.last_check);
+    localStorageApi.repos.update(repo.id, updatedRepo);
   }
 
   return (

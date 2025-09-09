@@ -29,9 +29,9 @@ export const title = tv({
     color: gradientMap,
     size: {
       sm: "text-2xl lg:text-3xl font-semibold",
-      md: "text-3xl lg:text-4xl lg:!leading-[3rem]",
-      lg: "text-4xl lg:text-5xl leading-[3rem] lg:!leading-[5rem]",
-      xl: "text-5xl lg:text-6xl leading-[3rem] lg:!leading-[5rem]",
+      md: "text-3xl lg:text-4xl lg:leading-12!",
+      lg: "text-4xl lg:text-5xl leading-12 lg:leading-20!",
+      xl: "text-5xl lg:text-6xl leading-12 lg:leading-20!",
     },
     fullWidth: {
       true: "w-full block",
@@ -44,7 +44,7 @@ export const title = tv({
   compoundVariants: [
     {
       color: colorTypes,
-      class: "bg-clip-text text-transparent bg-gradient-to-b",
+      class: "bg-clip-text text-transparent bg-linear-to-b",
     },
   ],
 });
@@ -62,7 +62,7 @@ export const p = tv({
       lg: "text-xl lg:text-2xl",
     },
     width: {
-      full: "!w-full",
+      full: "w-full!",
       fraction: "w-full sm:w-3/4 md:w-2/3",
     },
   },

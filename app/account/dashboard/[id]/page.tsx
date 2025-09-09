@@ -44,9 +44,9 @@ export default function RepositoryPage() {
     }
 
     setIsChecking(true);
-    const { data, error } = await serverApi.dependencies.get(repo);
+    const { data: updatedRepo, error } = await serverApi.dependencies.get(repo);
 
-    if (error || !data) {
+    if (error || !updatedRepo) {
       showNotification({
         message: "Failed to check dependencies",
         color: "danger",
@@ -56,8 +56,9 @@ export default function RepositoryPage() {
     }
 
     setIsChecking(false);
-    setPackages(data.packages);
-    setLastCheck(data.last_check);
+    setPackages(updatedRepo.packages);
+    setLastCheck(updatedRepo.last_check);
+    localStorageApi.repos.update(repo.id, updatedRepo);
   }
 
   async function handleDelete() {
@@ -175,7 +176,7 @@ export default function RepositoryPage() {
         </div>
       </div>
       <div className="flex gap-8 mt-8">
-        <Card className="p-2 flex-shrink-0 h-min">
+        <Card className="p-2 shrink-0 h-min">
           <CardBody>
             <div className="flex flex-col gap-4">
               <div className="flex flex-col text-sm">

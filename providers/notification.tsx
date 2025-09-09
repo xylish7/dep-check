@@ -45,13 +45,13 @@ export function NotificationProvider({
   children,
 }: {
   children: React.ReactNode;
-}): JSX.Element {
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const [notification, setNotification] = useState<Notification>({
     color: "success",
     message: "",
   });
-  const timeoutId = useRef<NodeJS.Timeout>();
+  const timeoutId = useRef<NodeJS.Timeout | undefined>(undefined);
 
   const hideNotification = useCallback(() => setIsOpen(false), []);
 
@@ -105,7 +105,7 @@ export function Notification() {
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed md:left-auto md:bottom-4 md:right-4 md:max-w-lg z-[60]"
+          className="fixed md:left-auto md:bottom-4 md:right-4 md:max-w-lg z-60"
           exit={{ y: isMobile ? -60 : 60 }}
           initial={{ y: isMobile ? -60 : 60 }}
           animate={{ y: 0 }}

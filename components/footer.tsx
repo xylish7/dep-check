@@ -21,7 +21,7 @@ export const Footer = ({
   navItems,
 }: FooterProps) => {
   return (
-    <footer className="relative container mx-auto max-w-7xl mb-24 mt-32 lg:mt-48 px-6 flex-grow">
+    <footer className="relative container mx-auto max-w-7xl mb-24 mt-32 lg:mt-48 px-6 grow">
       <Divider className="mb-10" orientation="horizontal" />
 
       <div className="flex flex-col sm:flex-row sm:justify-between">
