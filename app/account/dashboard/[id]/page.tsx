@@ -23,10 +23,9 @@ import { GithubRepoRow, localStorageApi } from "@/apis/local-storage";
 export default function RepositoryPage() {
   const [isChecking, setIsChecking] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [lastCheck, setLastCheck] = useState<string | null>(null);
   const { id } = useParams() as { id: string };
   const [repo, setRepo] = useState<GithubRepoRow | null>();
-  const [packages, setPackages] = useState<GithubRepoRow["packages"] | null>();
+  const { packages, last_check: lastCheck } = repo ?? {};
   const { showNotification } = useNotification();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const router = useRouter();
@@ -34,8 +33,6 @@ export default function RepositoryPage() {
   useEffect(() => {
     const repo = localStorageApi.repos.get(Number(id)).data;
     setRepo(repo);
-    setPackages(repo?.packages ?? null);
-    setLastCheck(repo?.last_check ?? null);
   }, [id]);
 
   async function handleCheck() {
@@ -56,9 +53,8 @@ export default function RepositoryPage() {
     }
 
     setIsChecking(false);
-    setPackages(updatedRepo.packages);
-    setLastCheck(updatedRepo.last_check);
     localStorageApi.repos.update(repo.id, updatedRepo);
+    setRepo(updatedRepo);
   }
 
   async function handleDelete() {
@@ -103,7 +99,11 @@ export default function RepositoryPage() {
     const parsedContent = JSON.parse(content);
 
     const { data: updatedRepo, error: getDepsError } =
-      await serverApi.dependencies.get(repo);
+      await serverApi.dependencies.get({
+        ...repo,
+        name: parsedContent.name,
+        package_json: content,
+      });
 
     if (getDepsError || !updatedRepo) {
       showNotification({
@@ -113,10 +113,7 @@ export default function RepositoryPage() {
       return;
     }
 
-    const { error } = localStorageApi.repos.update(repo.id, {
-      name: parsedContent.name,
-      package_json: content as string,
-    });
+    const { error } = localStorageApi.repos.update(updatedRepo.id, updatedRepo);
 
     if (error) {
       showNotification({
@@ -127,9 +124,6 @@ export default function RepositoryPage() {
     }
 
     setRepo(updatedRepo);
-    setPackages(updatedRepo.packages);
-    setLastCheck(updatedRepo.last_check);
-    localStorageApi.repos.update(updatedRepo.id, updatedRepo);
   }
 
   if (!repo) {
