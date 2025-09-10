@@ -116,11 +116,11 @@ export default function RepositoryPage() {
       return;
     }
 
-    const { data: updates, error } = await serverApi.dependencies.get(
+    const { data: updatedRepo, error } = await serverApi.dependencies.get(
       updatedRepo
     );
 
-    if (error || !updates) {
+    if (error || !updatedRepo) {
       showNotification({
         message: "Failed to check dependencies",
         color: "danger",
@@ -129,8 +129,9 @@ export default function RepositoryPage() {
     }
 
     setRepo(updatedRepo);
-    setPackages(updates.packages);
-    setLastCheck(updates.last_check);
+    setPackages(updatedRepo.packages);
+    setLastCheck(updatedRepo.last_check);
+    localStorageApi.repos.update(updatedRepo.id, updatedRepo);
   }
 
   if (!repo) {
