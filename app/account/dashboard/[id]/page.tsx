@@ -102,27 +102,25 @@ export default function RepositoryPage() {
 
     const parsedContent = JSON.parse(content);
 
-    const { data: updatedRepo, error: addRepoError } =
-      localStorageApi.repos.update(repo.id, {
-        name: parsedContent.name,
-        package_json: content as string,
-      });
+    const { data: updatedRepo, error: getDepsError } =
+      await serverApi.dependencies.get(repo);
 
-    if (addRepoError || !updatedRepo) {
+    if (getDepsError || !updatedRepo) {
       showNotification({
-        message: "Unable to add repository",
+        message: "Failed to check dependencies",
         color: "danger",
       });
       return;
     }
 
-    const { data: updatedRepo, error } = await serverApi.dependencies.get(
-      updatedRepo
-    );
+    const { error } = localStorageApi.repos.update(repo.id, {
+      name: parsedContent.name,
+      package_json: content as string,
+    });
 
-    if (error || !updatedRepo) {
+    if (error) {
       showNotification({
-        message: "Failed to check dependencies",
+        message: "Unable to update repository",
         color: "danger",
       });
       return;
